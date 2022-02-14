@@ -1,10 +1,11 @@
 var express = require('express');
+const https = require('https')
+const PaytmChecksum = require('./checksum.js');
 var router = express.Router();
 var config = require('./config')
-var formidable = require('formidable');
-const qs = require("querystring");
-const https = require('https')
-const PaytmChecksum = require('./checksum.js')
+var emailsender = require('./email');
+var database = require('./databases');
+var transaction = database.transaction;
 
 router.get('/', (req, res, next) => {
   res.render('paymentindex');
@@ -14,7 +15,7 @@ router.post('/paynow', (req, res, next) => {
   // Route for making payment
   var userData = {
     amount: req.body.amount,
-    customerId: req.body.name,
+    customerId: req.body.phone,
     customerEmail: req.body.email,
     customerPhone: req.body.phone
   };
@@ -27,10 +28,10 @@ router.post('/paynow', (req, res, next) => {
     params['WEBSITE'] = config.PaytmConfig.website;
     params['CHANNEL_ID'] = 'WEB';
     params['INDUSTRY_TYPE_ID'] = 'Retail';
-    params['ORDER_ID'] = 'TEST_' + new Date().getTime();
+    params['ORDER_ID'] =`${userData.customerEmail}_` + new Date().getTime();
     params['CUST_ID'] = userData.customerId;
     params['TXN_AMOUNT'] = userData.amount;
-    params['CALLBACK_URL'] = 'http://localhost:3000/payment/callback';
+    params['CALLBACK_URL'] = config.PaytmConfig.CALLBACK_URL;
     params['EMAIL'] = userData.customerEmail;
     params['MOBILE_NO'] = userData.customerPhone;
 
@@ -87,18 +88,17 @@ router.post('/callback',(req,res)=>{
         post_res.on('data',(chunk)=>{
           response += chunk;
         });
-
-        console.log("Response are:" + response);
         post_res.on('end',()=>{
-          let result = JSON.parse(response)
-          console.log("Result:" + result);
+          let result = JSON.parse(response);
+          let userEmail = result['ORDERID'].split('_')[0];
+          //insert into database
+          //transaction.insert(result);
           if (result.STATUS === 'TXN_SUCCESS') {
-            console.log("We are success");
-            //store in db
-            // db.collection('payments').doc('mPDd5z0pNiInbSIIotfj').update({paymentHistory:firebase.firestore.FieldValue.arrayUnion(result)})
-            // .then(()=>console.log("Update success"))
-            // .catch(()=>console.log("Unable to update"))
-            // alert(JSON.stringify(result))
+            emailsender.email(userEmail,JSON.stringify(result));
+            res.send(JSON.stringify(result));
+          }
+          else{
+            emailsender.email(userEmail,JSON.stringify(result));
             res.send(JSON.stringify(result));
           }
           //res.redirect(`http://localhost:3000/payment/status/${result.ORDERID}`)

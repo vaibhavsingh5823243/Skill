@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var database = require('./database');
+var database = require('./usersdatabase');
 var db = database.database;
 
 //registration part
