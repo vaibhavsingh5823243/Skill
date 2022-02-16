@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var email = require('./email')
 var database = require('./usersdatabase');
 var db = database.database;
 
@@ -9,9 +10,17 @@ router.get('/', function(req, res, next) {
   res.render('registration');
 });
 
-router.post('/',(req,res,next)=>{
-  db.insert(req.body);
-  res.send('Registration Successful.');
+
+const registerVal =(req,res,next)=>{
+
+}
+
+router.post('/register',registerVal,(req,res,next)=>{
+  console.log(req.body);
+  console.log("Getting data from register");
+
+  //db.insert(req.body);
+  res.write('Registration Successful.');
   })
 
 //login part
@@ -21,7 +30,8 @@ router.get('/login',(req,res)=>{
 });
 
 router.post('/login',(req,res)=>{
-  db.validate(req.body,res);
+  console.log("Getting request from frontend.");
+  //db.validate(req.body,res);
 })
 
 //delete user

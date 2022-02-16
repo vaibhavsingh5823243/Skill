@@ -12,5 +12,18 @@ var EmailConfig = {
   REFRESH_TOKEN:'1//041Fkegy6DI-2CgYIARAAGAQSNwF-L9Ir5_CtyeFpW7d5LZclf6bhiCcd6D-AOCDClrexAst5r-VpgXj5BjtxXvPuYf_v5QWa7lc',
   SENDER:'skillarkpvtltd@gmail.com'
 }
+
+
+var DatabaseConfig = {
+  host:'localhost',//in future domain name
+  user:'root',
+  password:'password',
+  database:'SKILLARKPVTLMT',
+  connectionLimit:10,
+  transaction:'TRANSACTIONS',
+  course:"LiveTrainingMaster"
+}
+
+  module.exports.db = DatabaseConfig;
   module.exports.PaytmConfig = PaytmConfig;
   module.exports.EmailConfig = EmailConfig;

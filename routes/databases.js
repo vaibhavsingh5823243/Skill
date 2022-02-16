@@ -1,17 +1,19 @@
 const res = require('express/lib/response');
 const mysql = require('mysql');
+const cf = require('./config')
+const dbConfig = cf.db;
 const config = {
-    host:'localhost',//in future domain name
-    user:'root',
-    password:'password',
-    database:'SKILLARKPVTLMT',
-    connectionLimit:10
+    host:dbConfig.host,
+    user:dbConfig.user,
+    password:dbConfig.password,
+    database:dbConfig.database,
+    connectionLimit:dbConfig.connectionLimit
 }
 const pool = mysql.createPool(config);
 
 class Transaction{
     constructor(){
-        this.table = 'TRANSACTIONS';
+        this.table = dbConfig.transaction;
     };
 
     insert(jsonData){
@@ -19,7 +21,13 @@ class Transaction{
         var values=[];
         for(var key in jsonData){
             columns += key + ",";
-            values.push(jsonData[key]);
+            if(typeof(jsonData[key]) === 'object'){
+                values.push(`${JSON.stringify(jsonData[key])}`);
+            }
+            else{
+                values.push(jsonData[key]);
+            }
+            
         }
         columns = columns.slice(0,columns.length-1);
         var query = `INSERT INTO ${this.table} (${columns}) VALUES ?`;
@@ -28,10 +36,10 @@ class Transaction{
                 console.log(err);
             }
             else{
-                res.send("Data inserted successfully.");
+                console.log("Data inserted successfully.");
             }
         })
-    };
+    }
 
     fetch(){
         var query = `SELECT * FROM ${this.table};`;
@@ -48,7 +56,7 @@ class Transaction{
 
 class CourseDatabase{
     constructor() {
-        this.table="LiveTrainingMaster";
+        this.table=dbConfig.course;
     };
 
     insert(jsonData,res){

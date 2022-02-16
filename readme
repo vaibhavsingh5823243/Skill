@@ -1,0 +1,4 @@
+Database
+-->create database skillark;
+-->use skillark;
+-->create table transaction(email varchar(100),coursecode varchar(100),transaction_hist JSON);
