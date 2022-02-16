@@ -25,7 +25,17 @@ const email=async function sendMail(email,data){
             from:EmailConfig.SENDER,
             to:`${email}`,
             subject:"SkillArk Payment",
-            text:`${data}`,
+            html:`<!DOCTYPE html>
+            <html lang="en" dir="ltr">
+              <head>
+                <meta charset="utf-8">
+                <title>SkillArk</title>
+              </head>
+              <body>
+                <h1>${data.STATUS}</h1>
+                <p>${data.TXNID}</p>
+              </body>
+            </html>`,
             
         };
         const result = await transport.sendMail(mailOptions);

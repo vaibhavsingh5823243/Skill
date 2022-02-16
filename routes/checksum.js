@@ -38,7 +38,7 @@ class PaytmChecksum {
 		   	var error = "string or object expected, " + (typeof params) + " given.";
 			return Promise.reject(error);
 		}
-		if(params.CHECKSUMHASH){//params.hasOwnProperty("CHECKSUMHASH")||
+		if(params["CHECKSUMHASH"]){
 			delete params.CHECKSUMHASH
 		}
 		if (typeof params !== "string"){

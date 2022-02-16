@@ -1,8 +1,10 @@
 var PaytmConfig = {
-  mid:"rXBPFj10520108198180",//"DmEAFL13411334535026"
-  key:"L3jNgRtLEBbtrmmW",//"ipIRwmFEm1B@KKDE",// 
+  // mid:"rXBPFj10520108198180",
+  // key:"L3jNgRtLEBbtrmmW",
+  mid:"DmEAFL13411334535026",
+  key:"ipIRwmFEm1B@KKDE",
   website: "skillark",
-  CALLBACK_URL:'http://localhost:3000/payment/callback'
+  CALLBACK_URL:'http://localhost:3000/payment/callback/'
   };
 
 var EmailConfig = {
