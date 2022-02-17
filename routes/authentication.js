@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var email = require('./email')
+var emailsender = require('./email')
 var database = require('./usersdatabase');
 var db = database.database;
 
@@ -42,10 +42,20 @@ router.get('/delete/:id',(req,res)=>{
     db.fetch(res);
 })
 
+var verify=(req,res)=>{
+  var email = req.body.email;
+  var otp = req.body.otp;
+  var data={
+    STATUS:"Your OTP for email verification:",
+    TXNID:otp,
+  }
+  emailsender.email(email,data);
+  res.send(data.TXNID)
+
+}
 
 
-
-
+router.post('/emailverification',verify)
 
 
 

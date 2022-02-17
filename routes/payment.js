@@ -34,27 +34,13 @@ router.post('/paynow', (req, res, next) => {
     params['CALLBACK_URL'] = config.PaytmConfig.CALLBACK_URL;
     params['EMAIL'] = userData.customerEmail;
     params['MOBILE_NO'] = userData.customerPhone;
-
-
     PaytmChecksum.generateSignature(params, config.PaytmConfig.key).then(
       function (checksum) {
-        var txn_url = "https://securegw-stage.paytm.in/theia/processTransaction"; // for staging
-        //var txn_url = "https://securegw.paytm.in/theia/processTransaction"; // for production
+        //var txn_url = "https://securegw-stage.paytm.in/theia/processTransaction"; // for staging
+        var txn_url = "https://securegw.paytm.in/theia/processTransaction"; // for production
 
-        var form_fields = "";
-        for (var x in params) {
-          form_fields += "<input hidden name='" + x + "' value='" + params[x] + "' >";
-        }
-        form_fields += "<input hidden name='CHECKSUMHASH' value='" + checksum + "' >";
-
-        res.writeHead(200, {
-          'Content-Type': 'text/html'
-        });
-        res.write('<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>');
+        res.write(JSON.stringify({ txn_url, checksum, params }));
         res.end();
-
-      }).catch(function (error) {
-        console.log(error);
       });
   }
 })
@@ -63,6 +49,7 @@ router.post('/paynow', (req, res, next) => {
 
 router.post('/callback', (req, res) => {
   var paytmCallBack = req.body;
+  console.log(paytmCallBack)
   var paytmChecksum = paytmCallBack['CHECKSUMHASH'];
   delete paytmCallBack.CHECKSUMHASH;
   var isVerifySignature = PaytmChecksum.verifySignature(paytmCallBack, config.PaytmConfig.key, paytmChecksum);
@@ -75,9 +62,9 @@ router.post('/callback', (req, res) => {
       var post_data = JSON.stringify(paytmParams);
       var options = {
         /* for Staging */
-        hostname: 'securegw-stage.paytm.in',
+        //hostname: 'securegw-stage.paytm.in',
         /* for Production */
-        //hostname: 'securegw.paytm.in',
+        hostname: 'securegw.paytm.in',
         port: 443,
         path: '/order/status',
         method: 'POST',
@@ -123,3 +110,5 @@ router.post('/callback', (req, res) => {
 })
 
 module.exports = router;
+
+
