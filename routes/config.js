@@ -19,9 +19,9 @@ var EmailConfig = {
 
 
 var DatabaseConfig = {
-  host: 'localhost',//in future domain name
+  host: '18.232.50.244',//in future domain name
   user: 'root',
-  password: 'password',
+  password: 'skillark',
   database: 'SKILLARKPVTLMT',
   connectionLimit: 10,
   transaction: 'TRANSACTIONS',

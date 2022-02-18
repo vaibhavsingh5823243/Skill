@@ -37,9 +37,11 @@ class Transaction {
         var query = `INSERT INTO ${this.table} (${columns}) VALUES ?`;
         pool.query(query, [[values]], (err, field) => {
             if (err) {
+                console.log(err);
                 return callback(err);
             }
             else {
+                console.log(true)
                 return callback(true);
             }
         })
@@ -259,3 +261,4 @@ module.exports.transaction = new Transaction();
 module.exports.user = new Users();
 module.exports.instructor = new Instructor();
 module.exports.contact = new ContactUs();
+
