@@ -4,11 +4,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors')
-var authenticationRouter = require('./routes/authentication');
-var usersRouter = require('./routes/users');
-var paymentRouter = require('./routes/payment');
-var courseRouter = require('./routes/course');
 var app = express();
+
+// var userRouter = require('./routes/user');
+// var courseRouter = require('./routes/course');
+// var instructorRouter = require('./routes/instructor');
+var contactRouter = require('./routes/contactus');
+var paymentRouter = require('./routes/payment');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -21,10 +23,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', authenticationRouter);
-app.use('/users', usersRouter);
+//different-different router
+// app.use('/user', userRouter);
+// app.use('/course/',courseRouter);
+// app.use('/instructor',instructorRouter);
 app.use('/payment',paymentRouter);
-app.use('/course/',courseRouter);
+app.use('/contactus',contactRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

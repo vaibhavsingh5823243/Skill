@@ -1,119 +1,261 @@
 const res = require('express/lib/response');
 const mysql = require('mysql');
-const cf = require('./config')
+const bcrypt = require('bcrypt');
+const cf = require('./config');
+const { redirect } = require('express/lib/response');
+const { UserRefreshClient } = require('google-auth-library');
 const dbConfig = cf.db;
+
 const config = {
-    host:dbConfig.host,
-    user:dbConfig.user,
-    password:dbConfig.password,
-    database:dbConfig.database,
-    connectionLimit:dbConfig.connectionLimit
+    host: dbConfig.host,
+    user: dbConfig.user,
+    password: dbConfig.password,
+    database: dbConfig.database,
+    connectionLimit: dbConfig.connectionLimit
 }
 const pool = mysql.createPool(config);
 
-class Transaction{
-    constructor(){
+class Transaction {
+    constructor() {
         this.table = dbConfig.transaction;
     };
 
-    insert(jsonData){
-        var columns="";
-        var values=[];
-        for(var key in jsonData){
+    insert(jsonData,callback) {
+        var columns = "";
+        var values = [];
+        for (var key in jsonData) {
             columns += key + ",";
-            if(typeof(jsonData[key]) === 'object'){
+            if (typeof (jsonData[key]) === 'object') {
                 values.push(`${JSON.stringify(jsonData[key])}`);
             }
-            else{
+            else {
                 values.push(jsonData[key]);
             }
-            
+
         }
-        columns = columns.slice(0,columns.length-1);
+        columns = columns.slice(0, columns.length - 1);
         var query = `INSERT INTO ${this.table} (${columns}) VALUES ?`;
-        pool.query(query,[[values]],(err,field)=>{
-            if(err){
-                console.log(err);
+        pool.query(query, [[values]], (err, field) => {
+            if (err) {
+                return callback(err);
             }
-            else{
-                console.log("Data inserted successfully.");
+            else {
+                return callback(true);
             }
         })
     }
 
-    fetch(){
+    fetch() {
         var query = `SELECT * FROM ${this.table};`;
-        pool.query(query,(err,data)=>{
-            if(err){
-                res.send(err);
+        pool.query(query, (err, data) => {
+            if (err) {
+                return callback(err);
             }
-            else{
-                res.send(data);
+            else {
+                return callback(data);
             }
         })
     }
 }
 
-class CourseDatabase{
+class CourseDatabase {
     constructor() {
-        this.table=dbConfig.course;
+        this.table = dbConfig.course;
     };
 
-    insert(jsonData,res){
-        var columns="";
-        var values=[];
-        for(var key in jsonData){
+    insert(jsonData, callback) {
+        
+        var columns = "";
+        var values = [];
+        for (var key in jsonData) {
             columns += key + ",";
-            if(typeof(jsonData[key]) === 'object'){
+            if (typeof (jsonData[key]) === 'object') {
                 values.push(`${JSON.stringify(jsonData[key])}`);
             }
-            else{
+            else {
                 values.push(jsonData[key]);
             }
-            
+
         }
-        columns = columns.slice(0,columns.length-1);
+        columns = columns.slice(0, columns.length - 1);
         var query = `INSERT INTO ${this.table} (${columns}) VALUES ?`;
-        pool.query(query,[[values]],(err,field)=>{
-            if(err){
-                res.send(err);
+        pool.query(query, [[values]], (err, field) => {
+            if (err) {
+                return callback(err)
             }
-            else{
-                res.send("Data inserted successfully.");
+            else {
+                return callback(true);
             }
         })
     };
 
-    fetch(res){
+    fetch(callback) {
         var query = `SELECT * FROM ${this.table};`;
-        pool.query(query,(err,data)=>{
-            if(err){
-                res.send(err);
+        pool.query(query, (err, data) => {
+            if (err) {
+                return callback(err);
             }
-            else{
-                //data = JSON.parse(data);
-                console.log(data);
-                res.send(data);
+            else {
+                return callback(data);
             }
         })
     };
 
-    fetchMeta(res){
-        var query = `SELECT ${this.table+'.TRAINING_META_DATA'},${'INSTRUCTORDETAILS.NAME'} FROM ${this.table} INNER JOIN ${'INSTRUCTORDETAILS'} ON ${'INSTRUCTORDETAILS.INS_ID'}=${'TRAINERID'};`;
-        pool.query(query,(err,data)=>{
-            if(err){
-                res.send(err);
+    fetchMeta(callback) {
+        var query = `SELECT ${this.table + '.TRAINING_META_DATA'},${'INSTRUCTORDETAILS.NAME'} FROM ${this.table} INNER JOIN ${'INSTRUCTORDETAILS'} ON ${'INSTRUCTORDETAILS.INS_ID'}=${'TRAINERID'};`;
+        pool.query(query, (err, data) => {
+            if (err) {
+                return callback(err);
             }
-            else{
-                for(var i=0;i<data.length;i++){
+            else {
+                for (var i = 0; i < data.length; i++) {
                     data[i]['TRAINING_META_DATA'] = JSON.parse(data[i]['TRAINING_META_DATA']);
                 }
-                res.send(data);
+                return callback(data);
             }
         })
     }
 
 }
+
+class Users {
+    constructor() {
+        this.table = dbConfig.userDb;
+        this.salt = bcrypt.genSaltSync(10);
+    }
+
+    insert(jsonData,callback) {
+        var columns = "";
+        var values = [];
+        jsonData['password'] = bcrypt.hashSync(jsonData['password'], this.salt)
+        for (var key in jsonData) {
+            columns += key + ",";
+            if (typeof (jsonData[key]) === 'object') {
+                values.push(`${JSON.stringify(jsonData[key])}`);
+            }
+            else {
+                values.push(jsonData[key]);
+            }
+
+        }
+        columns = columns.slice(0, columns.length - 1);
+        var query = `INSERT INTO ${this.table} (${columns}) VALUES ?`;
+        pool.query(query, [[values]], (err, field) => {
+            if (err) {
+                return callback(err);
+            }
+            else {
+                return callback(true);
+            }
+        })
+    };
+
+    validate(userInfo,callback) {
+        return new Promise(() => {
+            var query = `SELECT PASSWORD FROM ${this.table} WHERE email='${userInfo.email}';`;
+            pool.query(query, (err, data) => {
+                if (err) {
+                    return callback(err)
+                }
+                else if (data.length === 0) {
+                    return callback(false)
+                }
+                else {
+                    var Passwd = userInfo['password'];
+                    var currentPasswd = data[0]['PASSWORD'];
+                    var isValid = bcrypt.compareSync(Passwd, currentPasswd);
+                    if (isValid) {
+                        return callback(true)
+                    }
+                    else {
+                        return callback('invalid email')
+                    }
+                }
+            })
+        })
+    }
+}
+
+class Instructor{
+    constructor(){
+        this.table = dbConfig.instructorDb;
+    }
+
+    insert(jsonData,callback) {
+        var columns = "";
+        var values = [];
+        for (var key in jsonData) {
+            columns += key + ",";
+            if (typeof (jsonData[key]) === 'object') {
+                values.push(`${JSON.stringify(jsonData[key])}`);
+            }
+            else {
+                values.push(jsonData[key]);
+            }
+
+        }
+        columns = columns.slice(0, columns.length - 1);
+        var query = `INSERT INTO ${this.table} (${columns}) VALUES ?`;
+        pool.query(query, [[values]], (err, field) => {
+            if (err) {
+                return callback(err);
+            }
+            else {
+                return callback(true);
+            }
+        })
+    };
+
+    fetch(callback) {
+        var query = `SELECT * FROM ${this.table};`;
+        pool.query(query, (err, data) => {
+            if (err) {
+                return callback(err);
+            }
+            else {
+                return callback(data);
+            }
+        })
+    };
+
+
+}
+
+class ContactUs{
+    constructor(){
+        this.table = dbConfig.contactDb;
+    }
+    insert(jsonData,callback) {
+        var columns = "";
+        var values = [];
+        for (var key in jsonData) {
+            columns += key + ",";
+            if (typeof (jsonData[key]) === 'object') {
+                values.push(`${JSON.stringify(jsonData[key])}`);
+            }
+            else {
+                values.push(jsonData[key]);
+            }
+
+        }
+        columns = columns.slice(0, columns.length - 1);
+        var query = `INSERT INTO ${this.table} (${columns}) VALUES ?`;
+        pool.query(query, [[values]], (err, field) => {
+            if (err) {
+                return callback(err);
+            }
+            else {
+                return callback(true);
+            }
+        })
+    }
+
+    
+}
+
 
 module.exports.course = new CourseDatabase();
 module.exports.transaction = new Transaction();
+module.exports.user = new Users();
+module.exports.instructor = new Instructor();
+module.exports.contact = new ContactUs();

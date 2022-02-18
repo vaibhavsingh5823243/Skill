@@ -1,4 +1,9 @@
 Database
 -->create database skillark;
 -->use skillark;
--->create table transaction(email varchar(100),coursecode varchar(100),transaction_hist JSON);
+for creating  transactions table
+-->create table transactions(email varchar(100),name varchar(100),coursecode varchar(100),transaction_hist JSON,status bool);
+
+for creating contactus table
+-->create table contactus(userid int not null primary key auto_increment,email varchar(50),firstname varchar(100),lastname varchar(100),reason varchar(200),phone varchar(20),message varchar(300));
+

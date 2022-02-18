@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var emailsender = require('./email')
-var database = require('./usersdatabase');
-var db = database.database;
+var database = require('./databases');
+
+var userdb = database.user;
 
 //registration part
 
@@ -11,27 +12,21 @@ router.get('/', function(req, res, next) {
 });
 
 
-const registerVal =(req,res,next)=>{
-
-}
-
-router.post('/register',registerVal,(req,res,next)=>{
-  console.log(req.body);
-  console.log("Getting data from register");
-
-  //db.insert(req.body);
-  res.write('Registration Successful.');
+router.post('/register',(req,res)=>{
+  var userInfo = req.body;
+  userdb.insert(userInfo,res);
   })
 
 //login part
 
-router.get('/login',(req,res)=>{
-  res.render('login');
-});
+// router.get('/login',(req,res)=>{
+//   res.render('login');
+// });
+
 
 router.post('/login',(req,res)=>{
-  console.log("Getting request from frontend.");
-  //db.validate(req.body,res);
+  var userInfo = req.body;
+  userdb.validate(userInfo,res);
 })
 
 //delete user
@@ -49,8 +44,11 @@ var verify=(req,res)=>{
     STATUS:"Your OTP for email verification:",
     TXNID:otp,
   }
-  emailsender.email(email,data);
-  res.send(data.TXNID)
+  emailsender.email(email,data,(cbvalue)=>{
+    console.log("Email send");
+    res.end();
+  });
+  //res.end();
 
 }
 

@@ -1,12 +1,12 @@
 require('dotenv').config({ path: '../.env' });
-
+var HOST = 'http://localhost:';
 var PaytmConfig = {
   // mid: "DmEAFL13411334535026",
   // key: "ipIRwmFEm1B@KKDE",
   mid:"rXBPFj10520108198180",
   key:"L3jNgRtLEBbtrmmW",
   website: "skillark",
-  CALLBACK_URL: 'http://localhost:3000/payment/callback'
+  CALLBACK_URL: `${HOST}3000/payment/callback`
 };
 
 var EmailConfig = {
@@ -25,7 +25,10 @@ var DatabaseConfig = {
   database: 'SKILLARKPVTLMT',
   connectionLimit: 10,
   transaction: 'TRANSACTIONS',
-  course: "LiveTrainingMaster"
+  course: "LiveTrainingMaster",
+  userDb:'USERS',
+  instructorDb:'INSTRUCTORDETAILS',
+  contactDb:'ContactUs',
 }
 
 module.exports.db = DatabaseConfig;

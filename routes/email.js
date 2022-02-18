@@ -7,7 +7,7 @@ const { send } = require('express/lib/response');
 const oAuth2Client = new google.auth.OAuth2(EmailConfig.CLIENT_ID,EmailConfig.CLIENT_SECRET,EmailConfig.REDIRECT_URL);
 oAuth2Client.setCredentials({refresh_token:EmailConfig.REFRESH_TOKEN});
 
-const email=async function sendMail(email,data){
+const email=async function sendMail(email,data,callback){
     try{
         const accessToken = await oAuth2Client.getAccessToken();
         const transport = nodemailer.createTransport({
@@ -25,24 +25,14 @@ const email=async function sendMail(email,data){
             from:EmailConfig.SENDER,
             to:`${email}`,
             subject:"SkillArk Payment",
-            html:`<!DOCTYPE html>
-            <html lang="en" dir="ltr">
-              <head>
-                <meta charset="utf-8">
-                <title>SkillArk</title>
-              </head>
-              <body>
-                <h1>${data.STATUS}</h1>
-                <p>${data.TXNID}</p>
-              </body>
-            </html>`,
+            html:`<pre>${data}</pre>`,
             
         };
         const result = await transport.sendMail(mailOptions);
-        return result;
+        return callback(result);
     }
     catch(err){
-        return err;
+        return callback(err);
     }
 }
 

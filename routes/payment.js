@@ -14,11 +14,11 @@ router.get('/', (req, res, next) => {
 router.post('/paynow', (req, res, next) => {
   // Route for making payment
   var userData = {
-    amount: req.body.amount,
-    customerId: req.body.phone,
+    amount: String(req.body.amount),
+    customerId: String(req.body.phone),
     customerEmail: req.body.email,
-    customerPhone: req.body.phone,
-    courseCode: req.body.name
+    customerPhone: String(req.body.phone),
+    courseCode: String(req.body.name)
   };
   if (!userData.amount || !userData.customerId || !userData.customerEmail || !userData.customerPhone) {
     res.status(400).send('Payment failed')
@@ -28,10 +28,10 @@ router.post('/paynow', (req, res, next) => {
     params['WEBSITE'] = config.PaytmConfig.website;
     params['CHANNEL_ID'] = 'WEB';
     params['INDUSTRY_TYPE_ID'] = 'Retail';
-    params['ORDER_ID'] = `${userData.customerEmail}_` + new Date().getTime();
+    params['ORDER_ID'] =`${userData.customerEmail}_${new Date().getTime()}`;
     params['CUST_ID'] = userData.customerId;
     params['TXN_AMOUNT'] = userData.amount;
-    params['CALLBACK_URL'] = config.PaytmConfig.CALLBACK_URL;
+    params['CALLBACK_URL'] = config.PaytmConfig.CALLBACK_URL+`/${userData['courseCode']}`+`/${'vaibha'}`;
     params['EMAIL'] = userData.customerEmail;
     params['MOBILE_NO'] = userData.customerPhone;
     PaytmChecksum.generateSignature(params, config.PaytmConfig.key).then(
@@ -46,10 +46,9 @@ router.post('/paynow', (req, res, next) => {
 })
 
 
-
-router.post('/callback', (req, res) => {
+router.post('/callback/:coursename/:name', (req, res) => {
+  var userInfo=req.params;
   var paytmCallBack = req.body;
-  console.log(paytmCallBack)
   var paytmChecksum = paytmCallBack['CHECKSUMHASH'];
   delete paytmCallBack.CHECKSUMHASH;
   var isVerifySignature = PaytmChecksum.verifySignature(paytmCallBack, config.PaytmConfig.key, paytmChecksum);
@@ -80,23 +79,40 @@ router.post('/callback', (req, res) => {
         });
 
         post_res.on('end', function () {
-          let result = JSON.parse(response)
-          let userInfo = result.ORDERID.split('_');
+          let result = JSON.parse(response);
+          let email = result['ORDERID'].split('_')[0];
           let dbData={
-            EMAIL:userInfo[0],
-            COURSECODE:"Machine Learning",
+            EMAIL:email,
+            COURSECODE:userInfo['coursename'],//userInfo[0].replace("*"," "),
             TRANSACTION_HIST:result,
-            STATUS:0
+            STATUS:0,
+            NAME:userInfo['name']
           }
-          emailsender.email(userInfo,result)
+          var message={
+            Course:dbData['COURSECODE'],
+            status:result['STATUS'],
+            Amount:result['TXNAMOUNT'],
+            TXNID:result['TXNID'],
+            BANKTXNID:result['BANKTXNID']
+          }
+          var msg="";
+          for(var key in message){
+            msg+=`${key}:${message[key]}\n`
+          }
+          emailsender.email(userInfo[0],msg,(cbData)=>{
+            console.log('success');
+          })
           if (result.STATUS === 'TXN_SUCCESS') {
             dbData['STATUS'] = 1;
-            transaction.insert(dbData)
-            res.send('success');
+            transaction.insert(dbData,(cbData)=>{
+            res.send(cbData);
+            })
+            
           }
           else{
-            transaction.insert(dbData)
-            res.send("Failed")
+            transaction.insert(dbData,(cbData)=>{
+            res.send(false);
+            })
           }
         });
       });
@@ -105,10 +121,9 @@ router.post('/callback', (req, res) => {
     });
   }
   else {
-    console.log('checksum Mismatched');
+    res.send("Failed");
   }
 })
 
 module.exports = router;
-
 

@@ -4,15 +4,22 @@ var db = require('./databases')
 var courseDb = db.course;
 
 router.get('/',(req,res)=>{
-    courseDb.fetch(res);
+    courseDb.fetch((cbData)=>{
+        res.send(cbData);
+    })
 });
 
 router.post('/',(req,res)=>{
-    courseDb.insert(req.body,res);
+    var courseData = req.body;
+    courseDb.insert(courseData,(cbData)=>{
+        res.send(cbData);
+    })
 })
 
 router.get('/meta',(req,res)=>{
-    courseDb.fetchMeta(res);
+    courseDb.fetchMeta((cbData)=>{
+        res.send(cbData);
+    });
 })
 
 module.exports = router;
