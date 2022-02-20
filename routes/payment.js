@@ -16,11 +16,12 @@ router.post('/paynow', (req, res, next) => {
   var userData = {
     amount: String(req.body.amount),
     customerId: String(req.body.phone),
-    customerEmail: req.body.email,
+    customerEmail: String(req.body.email),
     customerPhone: String(req.body.phone),
-    courseCode: String(req.body.name)
+    courseCode: String(req.body.title),
+    fullname: String(req.body.fullName)
   };
-  if (!userData.amount || !userData.customerId || !userData.customerEmail || !userData.customerPhone) {
+  if (!userData.fullname || !userData.amount || !userData.customerId || !userData.customerEmail || !userData.customerPhone) {
     res.status(400).send('Payment failed')
   } else {
     var params = {};
@@ -31,9 +32,10 @@ router.post('/paynow', (req, res, next) => {
     params['ORDER_ID'] =`${userData.customerEmail}_${new Date().getTime()}`;
     params['CUST_ID'] = userData.customerId;
     params['TXN_AMOUNT'] = userData.amount;
-    params['CALLBACK_URL'] = config.PaytmConfig.CALLBACK_URL+`/${userData['courseCode']}`+`/${'vaibha'}`;
+    params['CALLBACK_URL'] = config.PaytmConfig.CALLBACK_URL+`/${userData['courseCode']}`+`/${userData['fullname']}`;
     params['EMAIL'] = userData.customerEmail;
     params['MOBILE_NO'] = userData.customerPhone;
+    console.log(params)
     PaytmChecksum.generateSignature(params, config.PaytmConfig.key).then(
       function (checksum) {
         //var txn_url = "https://securegw-stage.paytm.in/theia/processTransaction"; // for staging
@@ -99,7 +101,7 @@ router.post('/callback/:coursename/:name', (req, res) => {
           for(var key in message){
             msg+=`${key}:${message[key]}\n`
           }
-          emailsender.email(userInfo[0],msg,(cbData)=>{
+          emailsender.email(email,msg,(cbData)=>{
             console.log('success');
           })
           if (result.STATUS === 'TXN_SUCCESS') {

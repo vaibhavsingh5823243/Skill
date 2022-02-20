@@ -1,5 +1,5 @@
 const res = require('express/lib/response');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const cf = require('./config');
 const { redirect } = require('express/lib/response');
@@ -144,7 +144,7 @@ class Users {
         var query = `INSERT INTO ${this.table} (${columns}) VALUES ?`;
         pool.query(query, [[values]], (err, field) => {
             if (err) {
-                return callback(err);
+                return callback(false);
             }
             else {
                 return callback(true);
@@ -152,29 +152,45 @@ class Users {
         })
     };
 
+    isExist(email,callback){
+        var query = `SELECT * FROM ${this.table} where email='${email}';`;
+        pool.query(query,(err,data)=>{
+            if(err){
+                return callback(err);
+            }
+            else if(data.length){
+                return callback(true);
+            }
+            else{
+                return callback(false);
+            }
+        })
+
+    }
+
     validate(userInfo,callback) {
-        return new Promise(() => {
-            var query = `SELECT PASSWORD FROM ${this.table} WHERE email='${userInfo.email}';`;
-            pool.query(query, (err, data) => {
-                if (err) {
-                    return callback(err)
-                }
-                else if (data.length === 0) {
-                    return callback(false)
+      
+        var query = `SELECT PASSWORD FROM ${this.table} WHERE email='${userInfo.email}';`;
+        pool.query(query, (err, data) => {
+            if (err) {
+                return callback(err)
+            }
+            else if (data.length === 0) {
+                return callback(false);
+            }
+            else {
+                var Passwd = userInfo['password'];
+                var currentPasswd = data[0]['PASSWORD'];
+                var isValid = bcrypt.compareSync(Passwd, currentPasswd);
+                if (isValid) {
+                    return callback(true);
                 }
                 else {
-                    var Passwd = userInfo['password'];
-                    var currentPasswd = data[0]['PASSWORD'];
-                    var isValid = bcrypt.compareSync(Passwd, currentPasswd);
-                    if (isValid) {
-                        return callback(true)
-                    }
-                    else {
-                        return callback('invalid email')
-                    }
+                    return callback(false);
                 }
-            })
+            }
         })
+        
     }
 }
 

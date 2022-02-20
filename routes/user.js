@@ -2,59 +2,56 @@ var express = require('express');
 var router = express.Router();
 var emailsender = require('./email')
 var database = require('./databases');
-
 var userdb = database.user;
 
 //registration part
-
-router.get('/', function(req, res, next) {
-  res.render('registration');
-});
-
-
-router.post('/register',(req,res)=>{
-  var userInfo = req.body;
-  userdb.insert(userInfo,res);
+var verify = (req, res) => {
+  console.log(req.body)
+  var email = req.body.email;
+  userdb.isExist(email, (cbData) => {
+    console.log(cbData);
+    if (cbData === false) {
+      var otp = Math.floor((Math.random() * 1000000) + 1)
+      var data = `Your otp for email verification is:${otp}`;
+      emailsender.email(email, data, (cbvalue) => {
+        res.send(`${otp}`);
+      });
+    }
+    else {
+      res.send(true);
+    }
   })
 
-//login part
 
-// router.get('/login',(req,res)=>{
-//   res.render('login');
-// });
+}
+router.post('/emailverification', verify)
 
-
-router.post('/login',(req,res)=>{
+router.post('/register', (req, res) => {
   var userInfo = req.body;
-  userdb.validate(userInfo,res);
+  delete userInfo['password1'];
+  userInfo['user_role'] = 'student';
+  userInfo['usercode'] ='stu_'+`${new Date().getTime()}`;
+  console.log(req.body);
+  userdb.insert(userInfo, (cbData) => {
+    console.log(cbData);
+    res.send(cbData);
+  });
+})
+
+router.post('/login', (req, res) => {
+  var userInfo = req.body;
+  userdb.validate(userInfo, (cbData)=>{
+    console.log(cbData);
+    res.send(`${cbData}`);
+  });
 })
 
 //delete user
-
-router.get('/delete/:id',(req,res)=>{
-    console.log(req.params.id);
-    db.delete(req.params.id);
-    db.fetch(res);
+router.get('/delete/:id', (req, res) => {
+  console.log(req.params.id);
+  db.delete(req.params.id);
+  db.fetch(res);
 })
 
-var verify=(req,res)=>{
-  var email = req.body.email;
-  var otp = req.body.otp;
-  var data={
-    STATUS:"Your OTP for email verification:",
-    TXNID:otp,
-  }
-  emailsender.email(email,data,(cbvalue)=>{
-    console.log("Email send");
-    res.end();
-  });
-  //res.end();
-
-}
-
-
-router.post('/emailverification',verify)
-
-
-
 module.exports = router;
+

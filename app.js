@@ -6,11 +6,11 @@ var logger = require('morgan');
 var cors = require('cors')
 var app = express();
 
-// var userRouter = require('./routes/user');
 // var courseRouter = require('./routes/course');
 // var instructorRouter = require('./routes/instructor');
 var contactRouter = require('./routes/contactus');
 var paymentRouter = require('./routes/payment');
+var userRouter = require('./routes/user');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,12 +24,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //different-different router
-// app.use('/user', userRouter);
+
 // app.use('/course/',courseRouter);
 // app.use('/instructor',instructorRouter);
 app.use('/payment',paymentRouter);
 app.use('/contactus',contactRouter);
-
+app.use('/authentication', userRouter);
 
 
 // catch 404 and forward to error handler

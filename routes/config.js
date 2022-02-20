@@ -22,13 +22,13 @@ var DatabaseConfig = {
   host: '18.232.50.244',//in future domain name
   user: 'root',
   password: 'skillark',
-  database: 'SKILLARKPVTLMT',
+  database: 'skillarkpvtlmt',
   connectionLimit: 10,
-  transaction: 'TRANSACTIONS',
+  transaction: 'transactions',
   course: "LiveTrainingMaster",
-  userDb:'USERS',
+  userDb:'userpool',
   instructorDb:'INSTRUCTORDETAILS',
-  contactDb:'ContactUs',
+  contactDb:'contactus',
 }
 
 module.exports.db = DatabaseConfig;
