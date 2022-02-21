@@ -6,7 +6,7 @@ var PaytmConfig = {
   mid:"rXBPFj10520108198180",
   key:"L3jNgRtLEBbtrmmW",
   website: "skillark",
-  CALLBACK_URL: `${HOST}3000/payment/callback`
+  CALLBACK_URL: `https://editing.d50jcdg2nu6ok.amplifyapp.com/payment/callback`
 };
 
 var EmailConfig = {
