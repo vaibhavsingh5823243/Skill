@@ -6,11 +6,11 @@ var logger = require('morgan');
 var cors = require('cors')
 var app = express();
 
-// var courseRouter = require('./routes/course');
-// var instructorRouter = require('./routes/instructor');
+var courseRouter = require('./routes/course');
+var instructorRouter = require('./routes/instructor');
 var contactRouter = require('./routes/contactus');
 var paymentRouter = require('./routes/payment');
-var userRouter = require('./routes/user');
+var userRouter = require('./routes/authenticationApi');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,21 +24,23 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //different-different router
-
-// app.use('/course/',courseRouter);
-// app.use('/instructor',instructorRouter);
-app.use('/payment',paymentRouter);
-app.use('/contactus',contactRouter);
+app.get('/',(req,res)=>{
+  res.sendFile(__dirname+"/build/index.html");
+})
+app.use('/course',courseRouter);
+app.use('/instructor',instructorRouter);
+app.use('/payment', paymentRouter);
+app.use('/contactus', contactRouter);
 app.use('/authentication', userRouter);
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

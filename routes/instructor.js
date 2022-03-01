@@ -1,17 +1,18 @@
 const express = require('express');
 const router = express.Router()
-const db = require('./databases');
-const instructorDb = db.instructor;
+const database = require('./databases');
+const config = require("./config");
+const tableName = config.instructorDb;
 
-router.post('/',(req,res)=>{
+router.post('/', (req, res) => {
     var instructorData = req.body;
-    instructorDb.insert(instructorData,(cbData)=>{
+    database.insert(instructorData, tableName, (cbData) => {
         res.send(cbData);
     })
 })
 
-router.get('/',(req,res)=>{
-    instructorDb.fetch((cbData)=>{
+router.get('/', (req, res) => {
+    database.fetch(tableName,(cbData) => {
         res.send(cbData);
     })
 })

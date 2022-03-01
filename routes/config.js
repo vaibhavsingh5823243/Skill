@@ -1,12 +1,12 @@
 require('dotenv').config({ path: '../.env' });
-var HOST = 'http://localhost:';
+var HOST = 'http://localhost';
 var PaytmConfig = {
   // mid: "DmEAFL13411334535026",
   // key: "ipIRwmFEm1B@KKDE",
   mid:"rXBPFj10520108198180",
   key:"L3jNgRtLEBbtrmmW",
   website: "skillark",
-  CALLBACK_URL: `https://editing.d50jcdg2nu6ok.amplifyapp.com/payment/callback`
+  CALLBACK_URL: `${HOST}/payment/callback`
 };
 
 var EmailConfig = {
@@ -24,13 +24,14 @@ var DatabaseConfig = {
   password: 'skillark',
   database: 'skillarkpvtlmt',
   connectionLimit: 10,
-  transaction: 'transactions',
-  course: "LiveTrainingMaster",
+  transactionDb: 'transactions',
+  courseDb: "LiveTrainingMaster",
   userDb:'userpool',
   instructorDb:'INSTRUCTORDETAILS',
   contactDb:'contactus',
+  ADMIN:"skillarkpvtltd@gmail.com"
 }
 
-module.exports.db = DatabaseConfig;
+module.exports = DatabaseConfig;
 module.exports.PaytmConfig = PaytmConfig;
 module.exports.EmailConfig = EmailConfig;

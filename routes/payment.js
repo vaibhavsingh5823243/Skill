@@ -1,11 +1,11 @@
-var express = require('express');
+const express = require('express');
+const router = express.Router();
 const https = require('https')
 const PaytmChecksum = require('./checksum.js');
-var router = express.Router();
-var config = require('./config')
-var emailsender = require('./email');
-var database = require('./databases');
-var transaction = database.transaction;
+const config = require('./config')
+const emailsender = require('./email');
+const database = require('./databases');
+const tableName = config.transactionDb;
 
 router.get('/', (req, res, next) => {
   res.render('paymentindex');
@@ -29,10 +29,10 @@ router.post('/paynow', (req, res, next) => {
     params['WEBSITE'] = config.PaytmConfig.website;
     params['CHANNEL_ID'] = 'WEB';
     params['INDUSTRY_TYPE_ID'] = 'Retail';
-    params['ORDER_ID'] =`${userData.customerEmail}_${new Date().getTime()}`;
+    params['ORDER_ID'] = `${userData.customerEmail}_${new Date().getTime()}`;
     params['CUST_ID'] = userData.customerId;
     params['TXN_AMOUNT'] = userData.amount;
-    params['CALLBACK_URL'] = config.PaytmConfig.CALLBACK_URL+`/${userData['courseCode']}`+`/${userData['fullname']}`;
+    params['CALLBACK_URL'] = config.PaytmConfig.CALLBACK_URL + `/${userData['courseCode']}` + `/${userData['fullname']}`;
     params['EMAIL'] = userData.customerEmail;
     params['MOBILE_NO'] = userData.customerPhone;
     console.log(params)
@@ -49,12 +49,12 @@ router.post('/paynow', (req, res, next) => {
 
 
 router.post('/callback/:coursename/:name', (req, res) => {
-  var userInfo=req.params;
+  var userInfo = req.params;
   var paytmCallBack = req.body;
   var paytmChecksum = paytmCallBack['CHECKSUMHASH'];
   delete paytmCallBack.CHECKSUMHASH;
   var isVerifySignature = PaytmChecksum.verifySignature(paytmCallBack, config.PaytmConfig.key, paytmChecksum);
-  if(isVerifySignature) {
+  if (isVerifySignature) {
     var paytmParams = {};
     paytmParams["MID"] = paytmCallBack.MID;
     paytmParams["ORDERID"] = paytmCallBack.ORDERID;
@@ -83,37 +83,37 @@ router.post('/callback/:coursename/:name', (req, res) => {
         post_res.on('end', function () {
           let result = JSON.parse(response);
           let email = result['ORDERID'].split('_')[0];
-          let dbData={
-            EMAIL:email,
-            COURSECODE:userInfo['coursename'],//userInfo[0].replace("*"," "),
-            TRANSACTION_HIST:result,
-            STATUS:0,
-            NAME:userInfo['name']
+          let dbData = {
+            EMAIL: email,
+            COURSECODE: userInfo['coursename'],//userInfo[0].replace("*"," "),
+            TRANSACTION_HIST: result,
+            STATUS: 0,
+            NAME: userInfo['name']
           }
-          var message={
-            Course:dbData['COURSECODE'],
-            status:result['STATUS'],
-            Amount:result['TXNAMOUNT'],
-            TXNID:result['TXNID'],
-            BANKTXNID:result['BANKTXNID']
+          var message = {
+            Course: dbData['COURSECODE'],
+            status: result['STATUS'],
+            Amount: result['TXNAMOUNT'],
+            TXNID: result['TXNID'],
+            BANKTXNID: result['BANKTXNID']
           }
-          var msg="";
-          for(var key in message){
-            msg+=`${key}:${message[key]}\n`
+          var msg = "";
+          for (var key in message) {
+            msg += `${key}:${message[key]}\n`
           }
-          emailsender.email(email,msg,(cbData)=>{
+          emailsender.email(email, msg, (cbData) => {
             console.log('success');
           })
           if (result.STATUS === 'TXN_SUCCESS') {
             dbData['STATUS'] = 1;
-            transaction.insert(dbData,(cbData)=>{
-            res.send(cbData);
+            database.insert(dbData, tableName, (cbData) => {
+              res.send(cbData);
             })
-            
+
           }
-          else{
-            transaction.insert(dbData,(cbData)=>{
-            res.send(false);
+          else {
+            database.insert(dbData, tableName, (cbData) => {
+              res.send(false);
             })
           }
         });
