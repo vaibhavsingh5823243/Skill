@@ -1,5 +1,5 @@
 require('dotenv').config({ path: '../.env' });
-var HOST = 'http://localhost:4000';
+var HOST = 'https://skillark.org';
 var PaytmConfig = {
   // mid: "DmEAFL13411334535026",
   // key: "ipIRwmFEm1B@KKDE",
