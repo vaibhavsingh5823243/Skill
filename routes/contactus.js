@@ -20,11 +20,10 @@ router.post("/", (req, res) => {
         //console.log(cbData);
     })
 
-    database.insert(userInfo,tableName,(cbData) => {
-        //res.send(cbData);
-        console.log(cbData)
+    database.insert(userInfo, tableName, (cbData) => {
+        res.send(cbData);
     })
-   
+
 })
 
 module.exports = router;
