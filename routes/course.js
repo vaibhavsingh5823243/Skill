@@ -3,24 +3,24 @@ const router = express.Router();
 const database = require('./databases')
 const config = require('./config');
 const tableName = config.courseDb;
+const cardsData = ["courseTitle", "courseDescription", "courseThumbNail", "coursePrice"];
 
-router.get('/',(req,res)=>{
-    database.fetch(tableName,(cbData)=>{
+router.get('/', (req, res) => {
+    database.fetch(tableName, (cbData) => {
         res.send(cbData);
     })
 });
 
-router.post('/',(req,res)=>{
+router.get('/cards', (req, res) => {
+    database.fetch(tableName, (cbData) => {
+        res.send(cbData);
+    }, cardsData);
+})
+
+router.post('/add', (req, res) => {
     var courseData = req.body;
-    database.insert(courseData,tableName,(cbData)=>{
+    database.insert(courseData, tableName, (cbData) => {
         res.send(cbData);
     })
 })
-
-router.get('/meta',(req,res)=>{
-    database.fetchMeta(tableName,(cbData)=>{
-        res.send(cbData);
-    });
-})
-
 module.exports = router;

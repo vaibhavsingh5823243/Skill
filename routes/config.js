@@ -25,9 +25,9 @@ var DatabaseConfig = {
   database: 'skillarkpvtlmt',
   connectionLimit: 10,
   transactionDb: 'transactions',
-  courseDb: "LiveTrainingMaster",
+  courseDb: "CourseMaster",
   userDb:'userpool',
-  instructorDb:'INSTRUCTORDETAILS',
+  instructorDb:'instructorMaster',
   contactDb:'contactus',
   ADMIN:"skillarkpvtltd@gmail.com"
 }

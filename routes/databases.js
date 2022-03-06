@@ -18,21 +18,11 @@ class Database {
     }
 
     insert(jsonData, tableName, callback) {
-        let columns = "";
-        let values = [];
         if (jsonData['password']) {
             jsonData['password'] = bcrypt.hashSync(jsonData['password'], this.salt)
         }
-        for (let key in jsonData) {
-            columns += key + ",";
-            if (typeof (jsonData[key]) === 'object') {
-                values.push(`${JSON.stringify(jsonData[key])}`);
-            }
-            else {
-                values.push(jsonData[key]);
-            }
-        }
-        columns = columns.slice(0, columns.length - 1);
+        var columns = Object.keys(jsonData).join(",");
+        var values = Object.values(jsonData);
         var query = `INSERT INTO ${tableName} (${columns}) VALUES ?`;
         pool.query(query, [[values]], (err) => {
             if (err) {
@@ -44,8 +34,9 @@ class Database {
         })
     }
 
-    fetch(tableName, callback) {
-        var query = `SELECT * FROM ${tableName};`;
+    fetch(tableName, callback, columns = ['*']) {
+        columns = columns.join(",");
+        var query = `SELECT ${columns} FROM ${tableName};`;
         pool.query(query, (err, data) => {
             if (err) {
                 return callback(err);
@@ -56,7 +47,7 @@ class Database {
         })
     }
 
-    fetchMeta(tableName, callback) {
+    filter(tableName, callback) {
         var query = `SELECT ${tableName + '.TRAINING_META_DATA'},${'INSTRUCTORDETAILS.NAME'} FROM ${tableName} INNER JOIN ${'INSTRUCTORDETAILS'} ON ${'INSTRUCTORDETAILS.INS_ID'}=${'TRAINERID'};`;
         pool.query(query, (err, data) => {
             if (err) {
@@ -69,6 +60,10 @@ class Database {
                 return callback(data);
             }
         })
+    }
+
+    getSomeData(tableName, columns, callback) {
+
     }
 
     isExist(email, tableName, callback) {
