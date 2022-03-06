@@ -1,4 +1,4 @@
-# DATABASE
+DATABASE
 ### To create database 
 ```
 create database skillark;
