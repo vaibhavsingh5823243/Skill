@@ -2,6 +2,13 @@ const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const cf = require('./config');
 
+const response={
+    sucess:"",
+    message:"",
+    data:""
+}
+
+
 const config = {
     host: cf.host,
     user: cf.user,
@@ -21,12 +28,30 @@ class Database {
         if (jsonData['password']) {
             jsonData['password'] = bcrypt.hashSync(jsonData['password'], this.salt)
         }
+        if(jsonData['course']){
+            jsonData['course'] = bcrypt.hashSync('CRSE'+new Date());
+        }
+
         var columns = Object.keys(jsonData).join(",");
-        var values = Object.values(jsonData);
+        // var values = Object.values(jsonData);
+        var values =[];
+        for (var key in jsonData) {
+            if (typeof (jsonData[key]) === 'object') {
+                values.push(`${JSON.stringify(jsonData[key])}`);
+            }
+            else {
+                values.push(jsonData[key]);
+            }
+
+        }
         var query = `INSERT INTO ${tableName} (${columns}) VALUES ?`;
         pool.query(query, [[values]], (err) => {
             if (err) {
-                return callback(err);
+                //return callback(err);
+                response['success'] = false;
+                response['message'] = "Something went wrong plz try again.";
+                response['data'] = [];
+                return callback(response);
             }
             else {
                 return callback(true);

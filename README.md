@@ -24,3 +24,8 @@ create table CourseMaster(courseID int primary key auto_increment,courseCode var
 ```
 create table instructorMaster(instructorId int primary key auto_increment,instructorCode varchar(40),instructorName varchar(50),instructorDesignation varchar(100),instructorImage varchar(200),instructorAbout varchar(200),instructorEmail varchar(100),instructorMobile varchar(20),instructorAddress varchar(400));
 ```
+
+###
+```
+UPDATE tableName SET column name=CONCAT('CRSE-', UNIX_TIMESTAMP(created_on)) WHERE xyz'
+```
