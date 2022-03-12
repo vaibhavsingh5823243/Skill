@@ -1,8 +1,3 @@
-import img1 from '../img/awss.png';
-import img2 from '../img/ReactJS.png';
-import img3 from '../img/devops.png';
-import img4 from '../img/Azure.png';
-
 const CourseData = [
     {
         id: 1,
@@ -14,8 +9,8 @@ const CourseData = [
             head: 'Course Overview',
             body: [
                 {
-                    dataHeading: 'Course Introduction',
-                    dataBody: [
+                    sectionHeading: 'Course Introduction',
+                    sectionBody: [
                         'What is Web development',
                         'Web technologies',
                         'MERN Stack',
@@ -23,8 +18,8 @@ const CourseData = [
                     ],
                 },
                 {
-                    dataHeading: 'Explore HTML',
-                    dataBody: [
+                    sectionHeading: 'Explore HTML',
+                    sectionBody: [
                         'What is HTML',
                         'Importance of HTML',
                         'Browser & HTML',
@@ -34,9 +29,9 @@ const CourseData = [
                         'DOM',
                     ],
                 },
-                {
-                    dataHeading: 'Explore CSS',
-                    dataBody: [
+                section:{
+                    sectionHeading: 'Explore CSS',
+                    sectionBody: [
                         'What is CSS',
                         'Importance of CSS',
                         'How to apply CSS',
@@ -50,8 +45,8 @@ const CourseData = [
                     ],
                 },
                 {
-                    dataHeading: 'Explore JS',
-                    dataBody: [
+                    sectionHeading: 'Explore JS',
+                    sectionBody: [
                         'What is JS',
                         'Importance of JS',
                         'Features of JS',
@@ -74,8 +69,8 @@ const CourseData = [
                     ],
                 },
                 {
-                    dataHeading: 'Explore ES6',
-                    dataBody: [
+                    sectionHeading: 'Explore ES6',
+                    sectionBody: [
                         'What is ES6',
                         'Importance of ES6',
                         'ES6 Features',
@@ -91,8 +86,8 @@ const CourseData = [
                     ],
                 },
                 {
-                    dataHeading: 'Explore React JS',
-                    dataBody: [
+                    sectionHeading: 'Explore React JS',
+                    sectionBody: [
                         'What is React JS',
                         'Importance of React JS',
                         'Components in React JS',
@@ -112,55 +107,55 @@ const CourseData = [
             ]
         }, {
             head: 'projects',
-            body: [{
+            body: [section01:{
 
-                dataHeading: 'Classroom Record', dataBody: ['To create a table to show the student details of a classroom']
+                sectionHeading: 'Classroom Record', sectionBody: ['To create a table to show the student details of a classroom']
             },
-            {
-                dataHeading: 'An Article',
-                dataBody: [
+            section02:{
+                sectionHeading: 'An Article',
+                sectionBody: [
                     'To create a webpage to render an article',
                     'Artciles will have different headings, images, tables etc.',
                 ],
             },
-            { dataHeading: 'Event Registration Form', dataBody: ['To create a form to register for an event.'] },
+            { sectionHeading: 'Event Registration Form', sectionBody: ['To create a form to register for an event.'] },
             {
-                dataHeading: 'Responsive Home page',
-                dataBody: ['To create a responsive home page.', 'Home page will show some highlights of the organisation'],
+                sectionHeading: 'Responsive Home page',
+                sectionBody: ['To create a responsive home page.', 'Home page will show some highlights of the organisation'],
             },
             {
-                dataHeading: 'Portfolio',
-                dataBody: ['To create a multipage protfolio application.', 'Each page will cover one domain of the profile '],
+                sectionHeading: 'Portfolio',
+                sectionBody: ['To create a multipage protfolio application.', 'Each page will cover one domain of the profile '],
             },
             {
-                dataHeading: 'Basic Calculator',
-                dataBody: [
+                sectionHeading: 'Basic Calculator',
+                sectionBody: [
                     'To create a basic clacultor',
                     'Users can perform basic arithmetic operations using the application.',
                 ],
             },
             {
-                dataHeading: 'Event registration Form 2.0',
-                dataBody: ['To update the already crated event registration form.', 'Input validation is to be added.'],
+                sectionHeading: 'Event registration Form 2.0',
+                sectionBody: ['To update the already crated event registration form.', 'Input validation is to be added.'],
             },
             {
-                dataHeading: 'An Article',
-                dataBody: [
+                sectionHeading: 'An Article',
+                sectionBody: [
                     'To create a webpage to render an article',
                     'Artciles will have different headings, images, tables etc.',
                 ],
             },
             {
-                dataHeading: 'To do list',
-                dataBody: [
+                sectionHeading: 'To do list',
+                sectionBody: [
                     'To create a todo list application',
                     'User can add a new task',
                     'Change the status of list tasks between Started, Pending, and Completed.',
                 ],
             },
             {
-                dataHeading: 'An Article',
-                dataBody: [
+                sectionHeading: 'An Article',
+                sectionBody: [
                     'To create a webpage to render an article',
                     'Artciles will have different headings, images, tables etc.',
                 ],

@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const cf = require('./config');
 const { redirect } = require('express/lib/response');
 const { UserRefreshClient } = require('google-auth-library');
-const dbConfig = cf.db;
+const dbConfig = cf;
 
 const config = {
     host: dbConfig.host,
@@ -47,16 +47,17 @@ class Transaction {
         })
     }
 
-    fetch() {
+    async fetch() {
         var query = `SELECT * FROM ${this.table};`;
-        pool.query(query, (err, data) => {
+        await pool.query(query, (err, data) => {
             if (err) {
-                return callback(err);
+                return err;
             }
             else {
-                return callback(data);
+                return data;
             }
-        })
+        });
+        console.log(data);
     }
 }
 
@@ -291,8 +292,10 @@ class ContactUs {
 }
 
 
-module.exports.course = new CourseDatabase();
-module.exports.transaction = new Transaction();
-module.exports.user = new Users();
-module.exports.instructor = new Instructor();
-module.exports.contact = new ContactUs();
+// module.exports.course = new CourseDatabase();
+// module.exports.transaction = new Transaction();
+// module.exports.user = new Users();
+// module.exports.instructor = new Instructor();
+// module.exports.contact = new ContactUs();
+var obj = new Transaction();
+obj.fetch()

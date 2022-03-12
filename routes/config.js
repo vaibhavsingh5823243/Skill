@@ -3,8 +3,8 @@ var HOST = 'https://skillark.org';
 var PaytmConfig = {
   // mid: "DmEAFL13411334535026",
   // key: "ipIRwmFEm1B@KKDE",
-  mid:"rXBPFj10520108198180",
-  key:"L3jNgRtLEBbtrmmW",
+  mid: "rXBPFj10520108198180",
+  key: "L3jNgRtLEBbtrmmW",
   website: "skillark",
   CALLBACK_URL: `${HOST}/payment/callback`
 };
@@ -26,12 +26,20 @@ var DatabaseConfig = {
   connectionLimit: 10,
   transactionDb: 'transactions',
   courseDb: "CourseMaster",
-  userDb:'userpool',
-  instructorDb:'instructorMaster',
-  contactDb:'contactus',
-  ADMIN:"skillarkpvtltd@gmail.com"
+  userDb: 'userpool',
+  instructorDb: 'instructorMaster',
+  contactDb: 'contactus',
+  ADMIN: "skillarkpvtltd@gmail.com"
 }
 
-module.exports = DatabaseConfig;
+var awsBucket = {
+  secretAccessKey: 'RG4dmk5FiY38Uuz3hGDOYAmSama41YrSrqLqV6Bx',
+  accessKeyId: 'AKIAZD5NLXH466YWCPUG',
+  region: 'ap-south-1',
+  acl: 'public-read'
+}
+
+module.exports = DatabaseConfig//,awsBucket};
+//module.exports.awsBucket = awsBucket;
 module.exports.PaytmConfig = PaytmConfig;
 module.exports.EmailConfig = EmailConfig;

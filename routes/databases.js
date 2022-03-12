@@ -2,13 +2,6 @@ const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const cf = require('./config');
 
-const response={
-    sucess:"",
-    message:"",
-    data:""
-}
-
-
 const config = {
     host: cf.host,
     user: cf.user,
@@ -19,6 +12,15 @@ const config = {
 
 const pool = mysql.createPool(config);
 
+function response(success="",message="",data=""){
+    var response={
+        sucess:success,
+        message:message,
+        data:data
+    }
+    return response;
+}
+
 class Database {
     constructor() {
         this.salt = bcrypt.genSaltSync(10);
@@ -28,8 +30,8 @@ class Database {
         if (jsonData['password']) {
             jsonData['password'] = bcrypt.hashSync(jsonData['password'], this.salt)
         }
-        if(jsonData['course']){
-            jsonData['course'] = bcrypt.hashSync('CRSE'+new Date());
+        if(jsonData['courseCode']){
+            jsonData['courseCode'] = bcrypt.hashSync(jsonData['courseCode'], this.salt);
         }
 
         var columns = Object.keys(jsonData).join(",");
@@ -47,11 +49,7 @@ class Database {
         var query = `INSERT INTO ${tableName} (${columns}) VALUES ?`;
         pool.query(query, [[values]], (err) => {
             if (err) {
-                //return callback(err);
-                response['success'] = false;
-                response['message'] = "Something went wrong plz try again.";
-                response['data'] = [];
-                return callback(response);
+                return callback(false);
             }
             else {
                 return callback(true);
@@ -64,6 +62,7 @@ class Database {
         var query = `SELECT ${columns} FROM ${tableName};`;
         pool.query(query, (err, data) => {
             if (err) {
+                
                 return callback(err);
             }
             else {
@@ -72,16 +71,14 @@ class Database {
         })
     }
 
-    filter(tableName, callback) {
-        var query = `SELECT ${tableName + '.TRAINING_META_DATA'},${'INSTRUCTORDETAILS.NAME'} FROM ${tableName} INNER JOIN ${'INSTRUCTORDETAILS'} ON ${'INSTRUCTORDETAILS.INS_ID'}=${'TRAINERID'};`;
+    filter(tableName,jsonData,callback) {
+        var query = `SELECT * FROM ${tableName} WHERE ${Object.keys(jsonData)}='${Object.values(jsonData)}';`;
         pool.query(query, (err, data) => {
             if (err) {
+                
                 return callback(err);
             }
             else {
-                for (var i = 0; i < data.length; i++) {
-                    data[i]['TRAINING_META_DATA'] = JSON.parse(data[i]['TRAINING_META_DATA']);
-                }
                 return callback(data);
             }
         })
@@ -151,7 +148,11 @@ class Database {
     }
 }
 
+
+
 module.exports = new Database();
+
+
 
 
 
