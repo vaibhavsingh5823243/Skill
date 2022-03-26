@@ -1,40 +1,60 @@
+require('dotenv').config({path:"../.env"});
 const express = require("express");
-const router = express()//.Router();
-const aws = require("aws-sdk");
 const multer = require("multer");
-const multerS3 = require("multer-s3");
-const cf = require('./config');
+const multerS3 = require('multer-s3');
+const aws = require("aws-sdk");
+const router = express.Router();
+const path = require('path');
+const config = require("./config");
 
 const s3 = new aws.S3({
-    secretAccessKey: 'RG4dmk5FiY38Uuz3hGDOYAmSama41YrSrqLqV6Bx',
-    accessKeyId: 'AKIAZD5NLXH466YWCPUG',
-    region: 'ap-south-1',
-    acl: 'public-read'
-});
+    secretAccessKey: config.secretAccessKey,
+    accessKeyId: config.accessKeyId,
+    region: config.region,
 
-var upload = multer({
-    storage:multerS3({
-        s3:s3,
-        bucket:"vaibhav58",
-        key:(req,file,cb)=>{
-            cb(null,file.fieldname + "_" + file.originalname);
-        }
-    })
 })
 
-router.get("/",(req,res)=>{
-    res.sendFile(__dirname+"/index.html");
-})
-
-router.post('/upload',upload.single('file'),(req,res)=>{
-res.send(req.file.location);
-})
-
-
-
-const deleteFile = async (fileName) => {
-    await s3.deleteObjects({ Bucket: 'vaibhav58', Key: fileName }).promise();
-    console.log("File deleted successfully.")
+var filter = (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+    if (mimetype && extname) {
+        return cb(null, true);
+    } else {
+        cb("Error: Allow images only of extensions jpeg|jpg|png !");
+    }
 }
 
-router.listen(3000,console.log("App is running on port 3000"))
+var multerS3Config = multerS3({
+    s3: s3,
+    bucket: config.bucket,
+    acl: config.acl,
+    key: (req, file, cb) => {
+        cb(null, Date.now().toString() + file.originalname)
+    }
+})
+
+
+const upload = multer({
+    storage: multerS3Config,
+    fileFilter: filter,
+})
+
+router.get("/", (req, res) => {
+    res.sendFile(__dirname + "/index.html")
+})
+
+//var customUpload = upload.fields([{ name: 'profile', maxCount: 1 }])
+
+router.post("/profile",upload.single('profile'), (req, res, err) => {
+    try {
+        let filePath = req.file.location;
+        res.send(filePath);
+    }
+    catch (err) {
+        res.send(err);
+    }
+})
+
+
+module.exports = router;

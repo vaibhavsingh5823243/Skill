@@ -7,6 +7,11 @@ create database skillark;
 ```
 use skillark;
 ```
+
+### To create UserPool table
+```
+create table UserPool(email varchar(1000) not null primary key,firstName varchar(100),lastName varchar(100),uniqueCode varchar(100),phone varchar(100),password varchar(200));
+```
 ### To create  transactions table
 ```
 create table transactions(email varchar(100),name varchar(100),coursecode varchar(100),transaction_hist JSON,status bool);
@@ -17,12 +22,12 @@ create table contactus(userid int not null primary key auto_increment,email varc
 ```
 ### To create CourseMaster Table
 ```
-create table CourseMaster(courseID int primary key auto_increment,courseCode varchar(30),courseTitle varchar(30),courseDescription varchar(400),courseThumbNail varchar(200),coursePrice int,courseType varchar(50),courseCategory varchar(50),courseDuration int,courseProjects,courseSchedule json,courseSyllabus json,courseTargetedSkills JSON,coursePrerequisites json,courseFeatures json,courseInstructor varchar(40),courseStatus varchar(50),courseRejectedComment varchar(100),courseUpdatedOn date)
+create table CourseMaster(id int primary key auto_increment,code varchar(100),title varchar(100),description varchar(100),thumbnail varchar(200),price int,list json,accordion json)
 ```
 
 ### To create instructorMaster 
 ```
-create table instructorMaster(instructorId int primary key auto_increment,instructorCode varchar(40),instructorName varchar(50),instructorDesignation varchar(100),instructorImage varchar(200),instructorAbout varchar(200),instructorEmail varchar(100),instructorMobile varchar(20),instructorAddress varchar(400));
+create table InstructorMaster(id int primary key auto_increment,uniqueCode varchar(100),designation varchar(100),description varchar(500),image varchar(100),about varchar(100),email varchar(100),address varchar(500),course json,phone varchar(50),name varchar(100));
 ```
 
 ###

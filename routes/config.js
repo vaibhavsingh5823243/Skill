@@ -1,45 +1,53 @@
-require('dotenv').config({ path: '../.env' });
-var HOST = 'https://skillark.org';
-var PaytmConfig = {
-  // mid: "DmEAFL13411334535026",
-  // key: "ipIRwmFEm1B@KKDE",
+const config = {
+  HOST: "https://skillark.org",
+
+  //Paytm Config
+
+  //   # mid:"DmEAFL13411334535026"
+  //   # key:"ipIRwmFEm1B@KKDE"
   mid: "rXBPFj10520108198180",
   key: "L3jNgRtLEBbtrmmW",
   website: "skillark",
-  CALLBACK_URL: `${HOST}/payment/callback`
-};
+  CALLBACK_URL: `${this.HOST}/payment/callback`,
 
-var EmailConfig = {
-  CLIENT_ID: '872754693635-3c0l7h3v6evdudmgb78rk6ku6qboq36p.apps.googleusercontent.com',
-  CLIENT_SECRET: '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',
-  REDIRECT_URL: 'https://developers.google.com/oauthplayground',
-  REFRESH_TOKEN: '1//041Fkegy6DI-2CgYIARAAGAQSNwF-L9Ir5_CtyeFpW7d5LZclf6bhiCcd6D-AOCDClrexAst5r-VpgXj5BjtxXvPuYf_v5QWa7lc',
-  SENDER: 'skillarkpvtltd@gmail.com'
-}
+  //EmailConfig
 
+  CLIENT_ID: "872754693635-3c0l7h3v6evdudmgb78rk6ku6qboq36p.apps.googleusercontent.com",
+  CLIENT_SECRET: "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",
+  REDIRECT_URL: "https://developers.google.com/oauthplayground",
+  REFRESH_TOKEN: "1//041Fkegy6DI-2CgYIARAAGAQSNwF-L9Ir5_CtyeFpW7d5LZclf6bhiCcd6D-AOCDClrexAst5r-VpgXj5BjtxXvPuYf_v5QWa7lc",
+  SENDER: "skillarkpvtltd@gmail.com",
 
-var DatabaseConfig = {
+  //DatabaseConfig
+
+  //database on hostinger
+  // host: "217.21.87.103",//in future domain name
+  // user: "u847733890_main",
+  // password: "SkillArk@2022",
+  // database: "u847733890_main",
+
+  //database on aws
   host: '18.232.50.244',//in future domain name
   user: 'root',
   password: 'skillark',
   database: 'skillarkpvtlmt',
+  
   connectionLimit: 10,
-  transactionDb: 'transactions',
+  transactionDb: "transactions",
   courseDb: "CourseMaster",
-  userDb: 'userpool',
-  instructorDb: 'instructorMaster',
-  contactDb: 'contactus',
-  ADMIN: "skillarkpvtltd@gmail.com"
+  userDb: "UserPool",
+  instructorDb: "InstructorMaster",
+  contactDb: "contactus",
+  ADMIN: "skillarkpvtltd@gmail.com",
+  instructorSlideData: ['name', 'designation', 'description', 'course'],
+
+  //awsBucket 
+  secretAccessKey: "ro4XPsPKtR+jICvfwM3i828eOzt5/MmELD+Ni54v",
+  accessKeyId: "AKIAZSJ37KZ7CLNNZNIY",
+  region: "us-east-1",
+  acl: "public-read",
+  bucket: "skillark-assets/profiles"
+
 }
 
-var awsBucket = {
-  secretAccessKey: 'RG4dmk5FiY38Uuz3hGDOYAmSama41YrSrqLqV6Bx',
-  accessKeyId: 'AKIAZD5NLXH466YWCPUG',
-  region: 'ap-south-1',
-  acl: 'public-read'
-}
-
-module.exports = DatabaseConfig//,awsBucket};
-//module.exports.awsBucket = awsBucket;
-module.exports.PaytmConfig = PaytmConfig;
-module.exports.EmailConfig = EmailConfig;
+module.exports = config

@@ -1,8 +1,9 @@
+require('dotenv').config({path:"../.env"});
 const express = require('express');
 const router = express.Router();
-const config = require("./config");
 const emailSender = require('./email');
 const database = require('./databases');
+const config = require("./config");
 const ADMIN = config.ADMIN;
 const tableName = config.contactDb;
 

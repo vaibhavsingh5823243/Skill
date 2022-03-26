@@ -1,22 +1,20 @@
+require('dotenv').config({path:"../.env"});
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
-const cf = require('./config');
+const config = require('./config');
 
-const config = {
-    host: cf.host,
-    user: cf.user,
-    password: cf.password,
-    database: cf.database,
-    connectionLimit: cf.connectionLimit
-}
-
-const pool = mysql.createPool(config);
-
-function response(success="",message="",data=""){
-    var response={
-        sucess:success,
-        message:message,
-        data:data
+const pool = mysql.createPool({
+    host: config.host,
+    user: config.user,
+    password: config.password,
+    database: config.database,
+    connectionLimit: 10
+});
+function response(success = "", message = "", data = "") {
+    var response = {
+        sucess: success,
+        message: message,
+        data: data
     }
     return response;
 }
@@ -27,16 +25,16 @@ class Database {
     }
 
     insert(jsonData, tableName, callback) {
-        if (jsonData['password']) {
+        if (jsonData.hasOwnProperty('password')) {
             jsonData['password'] = bcrypt.hashSync(jsonData['password'], this.salt)
         }
-        if(jsonData['courseCode']){
+        if (jsonData.hasOwnProperty('courseCode')) {
             jsonData['courseCode'] = bcrypt.hashSync(jsonData['courseCode'], this.salt);
         }
 
         var columns = Object.keys(jsonData).join(",");
         // var values = Object.values(jsonData);
-        var values =[];
+        var values = [];
         for (var key in jsonData) {
             if (typeof (jsonData[key]) === 'object') {
                 values.push(`${JSON.stringify(jsonData[key])}`);
@@ -49,6 +47,7 @@ class Database {
         var query = `INSERT INTO ${tableName} (${columns}) VALUES ?`;
         pool.query(query, [[values]], (err) => {
             if (err) {
+                console.log(err);
                 return callback(false);
             }
             else {
@@ -62,7 +61,7 @@ class Database {
         var query = `SELECT ${columns} FROM ${tableName};`;
         pool.query(query, (err, data) => {
             if (err) {
-                
+
                 return callback(err);
             }
             else {
@@ -71,11 +70,11 @@ class Database {
         })
     }
 
-    filter(tableName,jsonData,callback) {
+    filter(tableName, jsonData, callback) {
         var query = `SELECT * FROM ${tableName} WHERE ${Object.keys(jsonData)}='${Object.values(jsonData)}';`;
         pool.query(query, (err, data) => {
             if (err) {
-                
+
                 return callback(err);
             }
             else {
@@ -114,9 +113,9 @@ class Database {
                 return callback(false);
             }
             else {
-                var Passwd = userInfo['password'];
-                var currentPasswd = data[0]['PASSWORD'];
-                var isValid = bcrypt.compareSync(Passwd, currentPasswd);
+                var currPass = userInfo['password'];
+                var storePass = data[0]['PASSWORD'];
+                var isValid = bcrypt.compareSync(storePass, currPass);
                 if (isValid) {
                     return callback(true);
                 }
@@ -128,7 +127,7 @@ class Database {
     }
 
     update(userInfo, tableName, callback) {
-        if (userInfo['password']) {
+        if (userInfo.hasOwnProperty('password')) {
             userInfo['password'] = bcrypt.hashSync(userInfo['password'], this.salt);
         }
         var subQuery = "";

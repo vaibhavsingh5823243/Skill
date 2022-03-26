@@ -1,11 +1,12 @@
+require('dotenv').config({path:"../.env"});
 const express = require('express');
 const router = express.Router();
 const https = require('https')
 const PaytmChecksum = require('./checksum.js');
-const config = require('./config')
 const emailsender = require('./email');
 const database = require('./databases');
-const tableName = config.transactionDb;
+const config = require("./config");
+const tableName =config.transactionDb;
 
 router.get('/', (req, res, next) => {
   res.render('paymentindex');
@@ -25,18 +26,18 @@ router.post('/paynow', (req, res, next) => {
     res.status(400).send('Payment failed')
   } else {
     var params = {};
-    params['MID'] = config.PaytmConfig.mid;
-    params['WEBSITE'] = config.PaytmConfig.website;
+    params['MID'] =config.mid;
+    params['WEBSITE'] =config.website;
     params['CHANNEL_ID'] = 'WEB';
     params['INDUSTRY_TYPE_ID'] = 'Retail';
     params['ORDER_ID'] = `${userData.customerEmail}_${new Date().getTime()}`;
     params['CUST_ID'] = userData.customerId;
     params['TXN_AMOUNT'] = userData.amount;
-    params['CALLBACK_URL'] = config.PaytmConfig.CALLBACK_URL + `/${userData['courseCode']}` + `/${userData['fullname']}`;
+    params['CALLBACK_URL'] =config.CALLBACK_URL + `/${userData['courseCode']}` + `/${userData['fullname']}`;
     params['EMAIL'] = userData.customerEmail;
     params['MOBILE_NO'] = userData.customerPhone;
     console.log(params)
-    PaytmChecksum.generateSignature(params, config.PaytmConfig.key).then(
+    PaytmChecksum.generateSignature(params,config.key).then(
       function (checksum) {
         //var txn_url = "https://securegw-stage.paytm.in/theia/processTransaction"; // for staging
         var txn_url = "https://securegw.paytm.in/theia/processTransaction"; // for production
@@ -53,12 +54,12 @@ router.post('/callback/:coursename/:name', (req, res) => {
   var paytmCallBack = req.body;
   var paytmChecksum = paytmCallBack['CHECKSUMHASH'];
   delete paytmCallBack.CHECKSUMHASH;
-  var isVerifySignature = PaytmChecksum.verifySignature(paytmCallBack, config.PaytmConfig.key, paytmChecksum);
+  var isVerifySignature = PaytmChecksum.verifySignature(paytmCallBack,config.key, paytmChecksum);
   if (isVerifySignature) {
     var paytmParams = {};
     paytmParams["MID"] = paytmCallBack.MID;
     paytmParams["ORDERID"] = paytmCallBack.ORDERID;
-    PaytmChecksum.generateSignature(paytmParams, config.PaytmConfig.key).then(function (checksum) {
+    PaytmChecksum.generateSignature(paytmParams,config.key).then(function (checksum) {
       paytmParams["CHECKSUMHASH"] = checksum;
       var post_data = JSON.stringify(paytmParams);
       var options = {

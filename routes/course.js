@@ -1,9 +1,11 @@
+require('dotenv').config({path:'../.env'});
 const express = require('express');
 const router = express.Router();
-const database = require('./databases')
-const config = require('./config');
+const database = require('./databases');
+const config = require('./config')
+
 const tableName = config.courseDb;
-const cardsData = ["courseTitle", "courseDescription", "courseThumbNail", "coursePrice","courseId"];
+const cardsData = config.cardsData;
 
 router.post('/', (req, res) => {
     var jsonData = req.body;

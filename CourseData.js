@@ -1,6 +1,5 @@
 [
     {
-        "courseCode": "CRO_1233456789",
         "courseTitle": "Amazon Web Services (AWS)",
         "courseDescription": "Giving deep insight of Machine Learning Algorithms, Overview of Python",
         "courseThumbNail": "img//vaibhav.jpg",

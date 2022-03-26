@@ -1,39 +1,32 @@
+require('dotenv').config({path:"../.env"});
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 const config = require('./config');
-const EmailConfig = config.EmailConfig;
-const { send } = require('express/lib/response');
+const oAuth2Client = new google.auth.OAuth2(config.CLIENT_ID, config.CLIENT_SECRET, config.REDIRECT_URL);
+oAuth2Client.setCredentials({ refresh_token: config.REFRESH_TOKEN });
 
-const oAuth2Client = new google.auth.OAuth2(EmailConfig.CLIENT_ID,EmailConfig.CLIENT_SECRET,EmailConfig.REDIRECT_URL);
-oAuth2Client.setCredentials({refresh_token:EmailConfig.REFRESH_TOKEN});
+async function sendMail(email, data, callback) {
+    const accessToken = await oAuth2Client.getAccessToken();
+    const transport = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            type: 'OAUTH2',
+            user: config.SENDER,
+            clientId: config.CLIENT_ID,
+            clientSecret: config.CLIENT_SECRET,
+            refreshToken: config.REFRESH_TOKEN,
+            accessToken: accessToken
+        }
+    })
+    const mailOptions = {
+        from: config.SENDER,
+        to: `${email}`,
+        subject: "SkillArk Payment",
+        html: `<pre>${data}</pre>`,
 
-const email=async function sendMail(email,data,callback){
-    try{
-        const accessToken = await oAuth2Client.getAccessToken();
-        const transport = nodemailer.createTransport({
-            service:'gmail',
-            auth:{
-               type:'OAUTH2',
-               user:EmailConfig.SENDER,
-               clientId:EmailConfig.CLIENT_ID,
-               clientSecret:EmailConfig.CLIENT_SECRET,
-               refreshToken:EmailConfig.REFRESH_TOKEN,
-               accessToken:accessToken
-            }
-        })
-        const mailOptions = {
-            from:EmailConfig.SENDER,
-            to:`${email}`,
-            subject:"SkillArk Payment",
-            html:`<pre>${data}</pre>`,
-            
-        };
-        const result = await transport.sendMail(mailOptions);
-        return callback(result);
-    }
-    catch(err){
-        return callback(err);
-    }
+    };
+    const result = await transport.sendMail(mailOptions);
+    return callback(result);
 }
 
-module.exports.email = email; 
+module.exports.email = sendMail; 

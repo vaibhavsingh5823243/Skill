@@ -1,7 +1,8 @@
+require('dotenv').config({path:'../.env'});
 const emailsender = require('./email');
 const database = require('./databases');
 const config = require('./config');
-const tableName = config.userDb;
+const tableName = config.userDb//process.env.userDb;
 
 class Authentication {
     verification(req, res) {
@@ -36,10 +37,7 @@ class Authentication {
 
     registration(req, res) {
         let userInfo = req.body;
-        delete userInfo['password1'];
-        userInfo['user_role'] = 'student';
-        userInfo['usercode'] = 'stu_' + `${new Date().getTime()}`;
-        console.log(req.body);
+        userInfo['uniqueCode'] = 'stu_' + `${new Date().getTime()}`;
         database.insert(userInfo, tableName, (cbData) => {
             res.send(cbData);
         });

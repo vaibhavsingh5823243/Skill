@@ -298,4 +298,3 @@ class ContactUs {
 // module.exports.instructor = new Instructor();
 // module.exports.contact = new ContactUs();
 var obj = new Transaction();
-obj.fetch()
