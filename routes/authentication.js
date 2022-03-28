@@ -38,6 +38,7 @@ class Authentication {
     registration(req, res) {
         let userInfo = req.body;
         userInfo['uniqueCode'] = 'stu_' + `${new Date().getTime()}`;
+        delete userInfo['password1'];
         database.insert(userInfo, tableName, (cbData) => {
             res.send(cbData);
         });

@@ -30,6 +30,7 @@ var multerS3Config = multerS3({
     bucket: config.bucket,
     acl: config.acl,
     key: (req, file, cb) => {
+        console.log(file);
         cb(null, Date.now().toString() + file.originalname)
     }
 })
@@ -49,6 +50,7 @@ router.get("/", (req, res) => {
 router.post("/profile",upload.single('profile'), (req, res, err) => {
     try {
         let filePath = req.file.location;
+        console.log(filePath);
         res.send(filePath);
     }
     catch (err) {

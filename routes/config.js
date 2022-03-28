@@ -39,7 +39,7 @@ const config = {
   instructorDb: "InstructorMaster",
   contactDb: "contactus",
   ADMIN: "skillarkpvtltd@gmail.com",
-  instructorSlideData: ['name', 'designation', 'description', 'course'],
+  instructorSlideData: ['name', 'designation', 'description', 'course','image'],
 
   //awsBucket 
   secretAccessKey: "ro4XPsPKtR+jICvfwM3i828eOzt5/MmELD+Ni54v",
