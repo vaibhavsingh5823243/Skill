@@ -1,4 +1,4 @@
-require('dotenv').config({path:'../.env'});
+require('dotenv').config({ path: '../.env' });
 const emailsender = require('./email');
 const database = require('./databases');
 const config = require('./config');
@@ -47,7 +47,15 @@ class Authentication {
     login(req, res) {
         let userInfo = req.body;
         database.validate(userInfo, tableName, (cbData) => {
-            res.send(`${cbData}`);
+            if (cbData) {
+                delete userInfo['password'];
+                database.filter(tableName,userInfo,(userInfo) => {
+                    res.send(userInfo);
+                })
+            }
+            else {
+                res.send(`${cbData}`);
+            }
         });
 
     }
@@ -58,6 +66,7 @@ class Authentication {
             res.send(cbData);
         })
     }
+
 }
 
 module.exports = new Authentication();

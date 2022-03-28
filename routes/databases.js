@@ -113,10 +113,12 @@ class Database {
                 return callback(false);
             }
             else {
+
                 var currPass = userInfo['password'];
                 var storePass = data[0]['PASSWORD'];
                 var isValid = bcrypt.compareSync(currPass,storePass);
                 if (isValid) {
+                    
                     return callback(true);
                 }
                 else {
