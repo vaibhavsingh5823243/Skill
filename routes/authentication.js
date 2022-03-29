@@ -64,7 +64,7 @@ class Authentication {
         let userInfo = req.body;
         database.update(userInfo, tableName, (cbData) => {
             if (cbData) {
-                delete userInfo['password'];
+                var filter = {email:userInfo['email']};
                 database.filter(tableName,userInfo,(userInfo) => {
                     res.send(userInfo);
                 })
