@@ -7,6 +7,7 @@ const emailsender = require('./email');
 const database = require('./databases');
 const config = require("./config");
 const tableName =config.transactionDb;
+const statusCode = config.statusCode;
 
 router.get('/', (req, res, next) => {
   res.render('paymentindex');
@@ -108,7 +109,7 @@ router.post('/callback/:coursename/:name', (req, res) => {
           if (result.STATUS === 'TXN_SUCCESS') {
             dbData['STATUS'] = 1;
             database.insert(dbData, tableName, (cbData) => {
-              res.send(cbData);
+              res.send(statusCode['success']);
             })
 
           }
@@ -124,7 +125,7 @@ router.post('/callback/:coursename/:name', (req, res) => {
     });
   }
   else {
-    res.send("Failed");
+    res.send(statusCode['failed']);
   }
 })
 

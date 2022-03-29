@@ -10,7 +10,7 @@ use skillark;
 
 ### To create UserPool table
 ```
-create table UserPool(email varchar(1000) not null primary key,firstName varchar(100),lastName varchar(100),uniqueCode varchar(100),phone varchar(100),password varchar(200),image varchar(100));
+create table UserPool(email varchar(1000) not null primary key,firstName varchar(100),lastName varchar(100),uniqueCode varchar(100),phone varchar(100),password varchar(200),image varchar(100),linkedIn varchar(100),address varchar(500));
 ```
 ### To create  transactions table
 ```

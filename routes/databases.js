@@ -1,8 +1,8 @@
-require('dotenv').config({path:"../.env"});
+require('dotenv').config({ path: "../.env" });
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const config = require('./config');
-
+const statusCode = config.statusCode;
 const pool = mysql.createPool({
     host: config.host,
     user: config.user,
@@ -47,11 +47,10 @@ class Database {
         var query = `INSERT INTO ${tableName} (${columns}) VALUES ?`;
         pool.query(query, [[values]], (err) => {
             if (err) {
-                console.log(err);
-                return callback(false);
+                return callback(statusCode['notInserted']);
             }
             else {
-                return callback(true);
+                return callback(statusCode['inserted']);
             }
         })
     }
@@ -61,11 +60,10 @@ class Database {
         var query = `SELECT ${columns} FROM ${tableName};`;
         pool.query(query, (err, data) => {
             if (err) {
-
                 return callback(err);
             }
             else {
-                return callback(data);
+                return callback(statusCode['error']);
             }
         })
     }
@@ -74,8 +72,7 @@ class Database {
         var query = `SELECT * FROM ${tableName} WHERE ${Object.keys(jsonData)}='${Object.values(jsonData)}';`;
         pool.query(query, (err, data) => {
             if (err) {
-
-                return callback(err);
+                return callback(statusCode['error']);
             }
             else {
                 return callback(data);
@@ -91,7 +88,7 @@ class Database {
         var query = `SELECT * FROM ${tableName} where email='${email}';`;
         pool.query(query, (err, data) => {
             if (err) {
-                return callback(err);
+                return callback(statusCode['error']);
             }
             else if (data.length) {
                 return callback(true);
@@ -107,22 +104,21 @@ class Database {
         var query = `SELECT PASSWORD FROM ${tableName} WHERE email='${userInfo.email}';`;
         pool.query(query, (err, data) => {
             if (err) {
-                return callback(err)
+                return callback(statusCode['error'])
             }
             else if (data.length === 0) {
-                return callback(false);
+                return callback(statusCode['notExist']);
             }
             else {
 
                 var currPass = userInfo['password'];
                 var storePass = data[0]['PASSWORD'];
-                var isValid = bcrypt.compareSync(currPass,storePass);
+                var isValid = bcrypt.compareSync(currPass, storePass);
                 if (isValid) {
-                    
-                    return callback(true);
+                    return callback(statusCode['match']);
                 }
                 else {
-                    return callback(false);
+                    return callback(statusCode['notMatch']);
                 }
             }
         })
@@ -140,10 +136,10 @@ class Database {
         let query = `UPDATE ${tableName} SET ${subQuery} WHERE email='${userInfo['email']}';`;
         pool.query(query, (err, field) => {
             if (err) {
-                return callback(err);
+                return callback(statusCode['error']);
             }
             else {
-                return callback(true);
+                return callback(statuscode['success']);
             }
         })
     }

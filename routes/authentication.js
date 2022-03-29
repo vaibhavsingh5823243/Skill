@@ -3,6 +3,7 @@ const emailsender = require('./email');
 const database = require('./databases');
 const config = require('./config');
 const tableName = config.userDb//process.env.userDb;
+const statusCode = config.statusCode;
 
 class Authentication {
     verification(req, res) {
@@ -17,7 +18,7 @@ class Authentication {
                     });
                 }
                 else {
-                    res.send(false); // user does not exist
+                    res.send(statusCode['notExist']); // user does not exist
                 }
             }
             else {
@@ -29,7 +30,7 @@ class Authentication {
                     });
                 }
                 else {
-                    res.send(true);//user already exist
+                    res.send(statusCode['exist']);//user already exist
                 }
             }
         })

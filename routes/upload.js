@@ -6,6 +6,8 @@ const aws = require("aws-sdk");
 const router = express.Router();
 const path = require('path');
 const config = require("./config");
+const { stat } = require('fs');
+const statusCode = config.statusCode;
 
 const s3 = new aws.S3({
     secretAccessKey: config.secretAccessKey,
@@ -54,7 +56,7 @@ router.post("/profile",upload.single('profile'), (req, res, err) => {
         res.send(filePath);
     }
     catch (err) {
-        res.send(err);
+        res.send(statusCode['error']);
     }
 })
 

@@ -8,7 +8,7 @@ const config = {
   mid: "rXBPFj10520108198180",
   key: "L3jNgRtLEBbtrmmW",
   website: "skillark",
-  CALLBACK_URL: `${this.HOST}/payment/callback`,
+  CALLBACK_URL: `http://localhost:3000/payment/callback`,
 
   //EmailConfig
 
@@ -46,8 +46,8 @@ const config = {
   accessKeyId: "AKIAZSJ37KZ7CLNNZNIY",
   region: "us-east-1",
   acl: "public-read",
-  bucket: "skillark-assets/profiles"
-
+  bucket: "skillark-assets/profiles",
+  statusCode:{notExist:"NE",exist:"AE",notMatch:"NM",match:"M",inserted:"I",notInserted:"NI",error:"E",success:true,"failed":true}
 }
 
 module.exports = config
