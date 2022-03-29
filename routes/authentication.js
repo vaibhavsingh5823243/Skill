@@ -63,7 +63,15 @@ class Authentication {
     update(req, res) {
         let userInfo = req.body;
         database.update(userInfo, tableName, (cbData) => {
-            res.send(cbData);
+            if (cbData) {
+                delete userInfo['password'];
+                database.filter(tableName,userInfo,(userInfo) => {
+                    res.send(userInfo);
+                })
+            }
+            else {
+                res.send(`${cbData}`);
+            }
         })
     }
 
