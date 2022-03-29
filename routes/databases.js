@@ -63,7 +63,7 @@ class Database {
                 return callback(err);
             }
             else {
-                return callback(statusCode['error']);
+                return callback(data);
             }
         })
     }
@@ -115,7 +115,7 @@ class Database {
                 var storePass = data[0]['PASSWORD'];
                 var isValid = bcrypt.compareSync(currPass, storePass);
                 if (isValid) {
-                    return callback(statusCode['match']);
+                    return callback(true);
                 }
                 else {
                     return callback(statusCode['notMatch']);
@@ -139,7 +139,7 @@ class Database {
                 return callback(statusCode['error']);
             }
             else {
-                return callback(statuscode['success']);
+                return callback(statusCode['success']);
             }
         })
     }
@@ -148,8 +148,6 @@ class Database {
 
 
 module.exports = new Database();
-
-
 
 
 

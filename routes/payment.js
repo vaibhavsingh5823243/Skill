@@ -115,7 +115,9 @@ router.post('/callback/:coursename/:name', (req, res) => {
           }
           else {
             database.insert(dbData, tableName, (cbData) => {
-              res.send(false);
+              res.redirect("http://localhost:3000/");
+              // res.redirect()
+              // res.send(false);
             })
           }
         });

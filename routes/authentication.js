@@ -48,7 +48,7 @@ class Authentication {
     login(req, res) {
         let userInfo = req.body;
         database.validate(userInfo, tableName, (cbData) => {
-            if (cbData) {
+            if (cbData===true) {
                 delete userInfo['password'];
                 database.filter(tableName,userInfo,(userInfo) => {
                     res.send(userInfo);
