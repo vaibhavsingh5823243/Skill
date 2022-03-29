@@ -65,7 +65,7 @@ class Authentication {
         database.update(userInfo, tableName, (cbData) => {
             if (cbData) {
                 var filter = {email:userInfo['email']};
-                database.filter(tableName,userInfo,(userInfo) => {
+                database.filter(tableName,filter,(userInfo) => {
                     res.send(userInfo);
                 })
             }
