@@ -1,11 +1,10 @@
-require('dotenv').config({path:'../.env'});
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const database = require('./databases');
-const config = require('./config')
 
-const tableName = config.courseDb;
-const cardsData = config.cardsData;
+const tableName = process.env.courseDb;
+const cardsData = process.env.cardsData;
 
 router.post('/', (req, res) => {
     var jsonData = req.body;
@@ -28,3 +27,4 @@ router.post('/add', (req, res) => {
     })
 })
 module.exports = router;
+

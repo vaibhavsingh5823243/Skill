@@ -1,14 +1,13 @@
-require('dotenv').config({path:"../.env"});
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const https = require('https')
 const PaytmChecksum = require('./checksum.js');
 const emailsender = require('./email');
 const database = require('./databases');
-const config = require("./config");
-const tableName =config.transactionDb;
-const statusCode = config.statusCode;
-const HOST="http://localhost:3000/";
+const tableName =process.env.transactionDb;
+const statusCode = process.env.statusCode;
+const HOST=process.env.HOST//"http://localhost:3000/";
 
 router.get('/', (req, res, next) => {
   res.render('paymentindex');
@@ -28,18 +27,18 @@ router.post('/paynow', (req, res, next) => {
     res.status(400).send('Payment failed')
   } else {
     var params = {};
-    params['MID'] =config.mid;
-    params['WEBSITE'] =config.website;
+    params['MID'] =process.env.mid;
+    params['WEBSITE'] =process.env.website;
     params['CHANNEL_ID'] = 'WEB';
     params['INDUSTRY_TYPE_ID'] = 'Retail';
     params['ORDER_ID'] = `${userData.customerEmail}_${new Date().getTime()}`;
     params['CUST_ID'] = userData.customerId;
     params['TXN_AMOUNT'] = userData.amount;
-    params['CALLBACK_URL'] =config.CALLBACK_URL + `/${userData['courseCode']}` + `/${userData['fullname']}`;
+    params['CALLBACK_URL'] =process.env.CALLBACK_URL + `/${userData['courseCode']}` + `/${userData['fullname']}`;
     params['EMAIL'] = userData.customerEmail;
     params['MOBILE_NO'] = userData.customerPhone;
-    console.log(params)
-    PaytmChecksum.generateSignature(params,config.key).then(
+    
+    PaytmChecksum.generateSignature(params,process.env.key).then(
       function (checksum) {
         //var txn_url = "https://securegw-stage.paytm.in/theia/processTransaction"; // for staging
         var txn_url = "https://securegw.paytm.in/theia/processTransaction"; // for production
@@ -56,12 +55,12 @@ router.post('/callback/:coursename/:name', (req, res) => {
   var paytmCallBack = req.body;
   var paytmChecksum = paytmCallBack['CHECKSUMHASH'];
   delete paytmCallBack.CHECKSUMHASH;
-  var isVerifySignature = PaytmChecksum.verifySignature(paytmCallBack,config.key, paytmChecksum);
+  var isVerifySignature = PaytmChecksum.verifySignature(paytmCallBack,process.env.key, paytmChecksum);
   if (isVerifySignature) {
     var paytmParams = {};
     paytmParams["MID"] = paytmCallBack.MID;
     paytmParams["ORDERID"] = paytmCallBack.ORDERID;
-    PaytmChecksum.generateSignature(paytmParams,config.key).then(function (checksum) {
+    PaytmChecksum.generateSignature(paytmParams,process.env.key).then(function (checksum) {
       paytmParams["CHECKSUMHASH"] = checksum;
       var post_data = JSON.stringify(paytmParams);
       var options = {
@@ -105,7 +104,7 @@ router.post('/callback/:coursename/:name', (req, res) => {
             msg += `${key}:${message[key]}\n`
           }
           emailsender.email(email, msg, (cbData) => {
-            console.log('success');
+            //console.log('success');
           })
           if (result.STATUS === 'TXN_SUCCESS') {
             dbData['STATUS'] = 1;

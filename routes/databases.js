@@ -1,8 +1,9 @@
-require('dotenv').config({ path: "../.env" });
+require('dotenv').config();
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const config = require('./config');
 const statusCode = config.statusCode;
+
 const pool = mysql.createPool({
     host: config.host,
     user: config.user,
@@ -10,14 +11,7 @@ const pool = mysql.createPool({
     database: config.database,
     connectionLimit: 10
 });
-function response(success = "", message = "", data = "") {
-    var response = {
-        sucess: success,
-        message: message,
-        data: data
-    }
-    return response;
-}
+
 
 class Database {
     constructor() {
@@ -68,8 +62,9 @@ class Database {
         })
     }
 
-    filter(tableName, jsonData, callback) {
-        var query = `SELECT * FROM ${tableName} WHERE ${Object.keys(jsonData)}='${Object.values(jsonData)}';`;
+    filter(tableName, jsonData, callback,columns=['*']) {
+        columns = columns.join(",");
+        var query = `SELECT ${columns} FROM ${tableName} WHERE ${Object.keys(jsonData)}='${Object.values(jsonData)}';`;
         pool.query(query, (err, data) => {
             if (err) {
                 return callback(statusCode['error']);

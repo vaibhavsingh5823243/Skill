@@ -1,11 +1,10 @@
-require('dotenv').config({path:"../.env"});
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const emailSender = require('./email');
 const database = require('./databases');
-const config = require("./config");
-const ADMIN = config.ADMIN;
-const tableName = config.contactDb;
+const ADMIN = process.env.ADMIN;
+const tableName = process.env.contactDb;
 
 router.post("/", (req, res) => {
     var userInfo = req.body;

@@ -1,9 +1,8 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config();
 const emailsender = require('./email');
 const database = require('./databases');
-const config = require('./config');
-const tableName = config.userDb//process.env.userDb;
-const statusCode = config.statusCode;
+const tableName = process.env.userDb//process.env.userDb;
+const statusCode = process.env.statusCode;
 
 class Authentication {
     verification(req, res) {
@@ -60,6 +59,13 @@ class Authentication {
         });
 
     }
+    
+    isSame(userInfo){
+        database.filter(tableName,{email:userInfo['email']},(cbData)=>{
+            console.log(cbData[0].image===userInfo.image);
+         },['image'])
+    }
+
 
     update(req, res) {
         let userInfo = req.body;

@@ -1,18 +1,16 @@
-require('dotenv').config({path:"../.env"});
+require('dotenv').config();
 const express = require("express");
 const multer = require("multer");
 const multerS3 = require('multer-s3');
 const aws = require("aws-sdk");
 const router = express.Router();
 const path = require('path');
-const config = require("./config");
-const { stat } = require('fs');
-const statusCode = config.statusCode;
+const statusCode = process.env.statusCode;
 
 const s3 = new aws.S3({
-    secretAccessKey: config.secretAccessKey,
-    accessKeyId: config.accessKeyId,
-    region: config.region,
+    secretAccessKey: process.env.secretAccessKey,
+    accessKeyId: process.env.accessKeyId,
+    region: process.env.region,
 
 })
 
@@ -29,8 +27,8 @@ var filter = (req, file, cb) => {
 
 var multerS3Config = multerS3({
     s3: s3,
-    bucket: config.bucket,
-    acl: config.acl,
+    bucket: process.env.bucket,
+    acl: process.env.acl,
     key: (req, file, cb) => {
         console.log(file);
         cb(null, Date.now().toString() + file.originalname)
@@ -59,6 +57,7 @@ router.post("/profile",upload.single('profile'), (req, res, err) => {
         res.send(statusCode['error']);
     }
 })
+
 
 
 module.exports = router;
