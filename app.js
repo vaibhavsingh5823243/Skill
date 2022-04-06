@@ -34,7 +34,7 @@ app.use('/instructor',instructorRouter);
 app.use('/payment', paymentRouter);
 app.use('/contactus', contactRouter);
 app.use('/authentication', userRouter);
-app.use('/upload',uploadRouter);
+app.use('/upload',uploadRouter.router);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -14,7 +14,7 @@ const s3 = new aws.S3({
 
 })
 
-console.log(s3)
+
 var filter = (req, file, cb) => {
     const filetypes = /jpeg|jpg|png/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
@@ -31,7 +31,6 @@ var multerS3Config = multerS3({
     bucket: process.env.bucket,
     acl: process.env.acl,
     key: (req, file, cb) => {
-        console.log(file);
         cb(null, Date.now().toString() + file.originalname)
     }
 })
@@ -48,10 +47,9 @@ router.get("/", (req, res) => {
 
 //var customUpload = upload.fields([{ name: 'profile', maxCount: 1 }])
 
-router.post("/profile",upload.single('profile'), (req, res, err) => {
+router.post("/profile", upload.single('profile'), (req, res, err) => {
     try {
         let filePath = req.file.location;
-        console.log(filePath);
         res.send(filePath);
     }
     catch (err) {
@@ -59,6 +57,19 @@ router.post("/profile",upload.single('profile'), (req, res, err) => {
     }
 })
 
+async function deleteFile(key) {
+    var params = { Bucket: process.env.bucket, Key: key }
+    if(key===process.env.defaultProfile){
+        return false //default images can't be deleted
+    }
+    s3.deleteObject(params, (err, data) => {
+        if (err) {
+            return false;
+        }
+        return true;
+    })
+}
 
 
-module.exports = router;
+module.exports = {deleteFile,router}
+// module.exports = router;

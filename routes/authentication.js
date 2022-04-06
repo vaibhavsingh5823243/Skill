@@ -1,8 +1,9 @@
 require('dotenv').config();
+const upload = require('./upload');
 const emailsender = require('./email');
 const database = require('./databases');
 const tableName = process.env.userDb//process.env.userDb;
-const statusCode =  { notExist:"NE", exist:"AE", notMatch:"NM", match:"M", inserted:"I", notInserted:"NI", error:"E", success:true, "failed":true }
+const statusCode = { notExist: "NE", exist: "AE", notMatch: "NM", match: "M", inserted: "I", notInserted: "NI", error: "E", success: true, "failed": true }
 
 class Authentication {
     verification(req, res) {
@@ -47,9 +48,9 @@ class Authentication {
     login(req, res) {
         let userInfo = req.body;
         database.validate(userInfo, tableName, (cbData) => {
-            if (cbData===true) {
+            if (cbData === true) {
                 delete userInfo['password'];
-                database.filter(tableName,userInfo,(userInfo) => {
+                database.filter(tableName, userInfo, (userInfo) => {
                     res.send(userInfo);
                 })
             }
@@ -59,20 +60,22 @@ class Authentication {
         });
 
     }
-    
-    isSame(userInfo){
-        database.filter(tableName,{email:userInfo['email']},(cbData)=>{
-            console.log(cbData[0].image===userInfo.image);
-         },['image'])
-    }
-
 
     update(req, res) {
         let userInfo = req.body;
+        var emailJson = { email: userInfo['email'] };
+        database.filter(tableName, emailJson, (image) => {
+            var storeImg = image[0]['image']
+            if (storeImg != userInfo['image']) {
+                storeImg = storeImg.split("/");
+                let originalName = storeImg[storeImg.length - 1];
+                upload.deleteFile(originalName);
+            }
+        }, ['image']);
+
         database.update(userInfo, tableName, (cbData) => {
             if (cbData) {
-                var filter = {email:userInfo['email']};
-                database.filter(tableName,filter,(userInfo) => {
+                database.filter(tableName, emailJson, (userInfo) => {
                     res.send(userInfo);
                 })
             }

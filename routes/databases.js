@@ -2,7 +2,7 @@ require('dotenv').config();
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const config = require('./config');
-const statusCode =  { notExist:"NE", exist:"AE", notMatch:"NM", match:"M", inserted:"I", notInserted:"NI", error:"E", success:true, "failed":true }
+const statusCode =  { notExist:"NE", exist:"AE", notMatch:"NM", match:"M", inserted:"I", notInserted:"NI", error:"E", success:true, failed:true }
 //process.env.statusCode;
 const pool = mysql.createPool({
     host: process.env.host,
