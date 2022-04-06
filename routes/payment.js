@@ -6,8 +6,6 @@ const PaytmChecksum = require('./checksum.js');
 const emailsender = require('./email');
 const database = require('./databases');
 const tableName =process.env.transactionDb;
-const statusCode =  { notExist:"NE", exist:"AE", notMatch:"NM", match:"M", inserted:"I", notInserted:"NI", error:"E", success:true, "failed":true }
-const HOST="http://localhost:3000/";
 
 router.get('/', (req, res, next) => {
   res.render('paymentindex');
@@ -34,7 +32,7 @@ router.post('/paynow', (req, res, next) => {
     params['ORDER_ID'] = `${userData.customerEmail}_${new Date().getTime()}`;
     params['CUST_ID'] = userData.customerId;
     params['TXN_AMOUNT'] = userData.amount;
-    params['CALLBACK_URL'] =process.env.CALLBACK_URL + `/${userData['courseCode']}` + `/${userData['fullname']}`;
+    params['CALLBACK_URL'] =`${process.env.CLOUDHOST}payment/callback/${userData['courseCode']}/${userData['fullname']}`;
     params['EMAIL'] = userData.customerEmail;
     params['MOBILE_NO'] = userData.customerPhone;
     
@@ -109,13 +107,13 @@ router.post('/callback/:coursename/:name', (req, res) => {
           if (result.STATUS === 'TXN_SUCCESS') {
             dbData['STATUS'] = 1;
             database.insert(dbData, tableName, (cbData) => {
-              res.send(HOST);
+              res.send(process.env.CLOUDHOST);
             })
 
           }
           else {
             database.insert(dbData, tableName, (cbData) => {
-              res.redirect(HOST);
+              res.redirect(process.env.CLOUDHOST);
               // res.redirect()
               // res.send(false);
             })
@@ -127,7 +125,7 @@ router.post('/callback/:coursename/:name', (req, res) => {
     });
   }
   else {
-    res.redirect(HOST);
+    res.redirect(process.env.CLOUDHOST);
   }
 })
 
