@@ -2,13 +2,13 @@ require('dotenv').config();
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const config = require('./config');
-const statusCode = config.statusCode;
-
+const statusCode =  { notExist:"NE", exist:"AE", notMatch:"NM", match:"M", inserted:"I", notInserted:"NI", error:"E", success:true, "failed":true }
+//process.env.statusCode;
 const pool = mysql.createPool({
-    host: config.host,
-    user: config.user,
-    password: config.password,
-    database: config.database,
+    host: process.env.host,
+    user: process.env.user,
+    password: process.env.password,
+    database: process.env.database,
     connectionLimit: 10
 });
 
@@ -41,9 +41,11 @@ class Database {
         var query = `INSERT INTO ${tableName} (${columns}) VALUES ?`;
         pool.query(query, [[values]], (err) => {
             if (err) {
+                console.log(err);
                 return callback(statusCode['notInserted']);
             }
             else {
+                console.log(statusCode['inserted']);
                 return callback(statusCode['inserted']);
             }
         })
@@ -144,5 +146,9 @@ class Database {
 
 module.exports = new Database();
 
+// var obj = new Database();
+// obj.fetch('InstructorMaster',(cbData)=>{
+//     console.log(cbData);
+// })
 
 

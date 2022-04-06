@@ -22,7 +22,7 @@ create table contactus(userid int not null primary key auto_increment,email varc
 ```
 ### To create CourseMaster Table
 ```
-create table CourseMaster(id int primary key auto_increment,uniqueCode varchar(100),title varchar(100),description varchar(100),thumbnail varchar(200),price int,list json,accordion json)
+create table CourseMaster(id int primary key auto_increment,uniqueCode varchar(100),title varchar(100),description varchar(100),thumbnail varchar(200),price int,list json,accordion json,vedio varchar(400))
 ```
 
 ### To create instructorMaster 

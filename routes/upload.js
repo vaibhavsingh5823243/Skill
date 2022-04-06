@@ -14,6 +14,7 @@ const s3 = new aws.S3({
 
 })
 
+console.log(s3)
 var filter = (req, file, cb) => {
     const filetypes = /jpeg|jpg|png/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());

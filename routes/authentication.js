@@ -2,7 +2,7 @@ require('dotenv').config();
 const emailsender = require('./email');
 const database = require('./databases');
 const tableName = process.env.userDb//process.env.userDb;
-const statusCode = process.env.statusCode;
+const statusCode =  { notExist:"NE", exist:"AE", notMatch:"NM", match:"M", inserted:"I", notInserted:"NI", error:"E", success:true, "failed":true }
 
 class Authentication {
     verification(req, res) {

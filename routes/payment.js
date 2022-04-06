@@ -6,8 +6,8 @@ const PaytmChecksum = require('./checksum.js');
 const emailsender = require('./email');
 const database = require('./databases');
 const tableName =process.env.transactionDb;
-const statusCode = process.env.statusCode;
-const HOST=process.env.HOST//"http://localhost:3000/";
+const statusCode =  { notExist:"NE", exist:"AE", notMatch:"NM", match:"M", inserted:"I", notInserted:"NI", error:"E", success:true, "failed":true }
+const HOST="http://localhost:3000/";
 
 router.get('/', (req, res, next) => {
   res.render('paymentindex');

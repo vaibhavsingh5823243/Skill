@@ -1,2 +1,3 @@
 .env
-/routes/config
+**/config.js
+skillark_accessKeys.csv

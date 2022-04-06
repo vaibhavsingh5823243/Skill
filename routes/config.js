@@ -20,9 +20,9 @@ const config = {
   SENDER: "skillarkpvtltd@gmail.com",
 
   //database on aws
-  host: '18.232.50.244',//in future domain name
-  user: 'root',
-  password: 'skillark',
+  host:'3.108.66.89',
+  user:'skillark',
+  password:'Vinay@432',
   database: 'skillarkpvtlmt',
 
   connectionLimit: 10,
