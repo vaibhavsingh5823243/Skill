@@ -5,6 +5,9 @@ const database = require('./databases');
 const tableName = process.env.userDb//process.env.userDb;
 const statusCode = { notExist: "NE", exist: "AE", notMatch: "NM", match: "M", inserted: "I", notInserted: "NI", error: "E", success: true, "failed": true }
 
+
+//encrypt usercode
+
 class Authentication {
     verification(req, res) {
         let email = req.body.email;
