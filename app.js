@@ -12,7 +12,7 @@ var contactRouter = require('./routes/contactus');
 var paymentRouter = require('./routes/payment');
 var userRouter = require('./routes/authenticationApi');
 var uploadRouter = require('./routes/upload');
-
+var examRouter = require('./routes/exam')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -35,6 +35,7 @@ app.use('/payment', paymentRouter);
 app.use('/contactus', contactRouter);
 app.use('/authentication', userRouter);
 app.use('/upload',uploadRouter.router);
+app.use('/exam',examRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -2,7 +2,7 @@ require('dotenv').config();
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const config = require('./config');
-const statusCode =  { notExist:"NE", exist:"AE", notMatch:"NM", match:"M", inserted:"I", notInserted:"NI", error:"E", success:true, failed:true }
+const statusCode =  { notExist:"NE", exist:"AE", notMatch:"NM", match:"M", inserted:"I", notInserted:"NI", error:"E", success:true, failed:true };
 //process.env.statusCode;
 const pool = mysql.createPool({
     host: process.env.host,
@@ -70,6 +70,9 @@ class Database {
         pool.query(query, (err, data) => {
             if (err) {
                 return callback(statusCode['error']);
+            }
+            else if(data.length===0){
+                return callback(statusCode['notMatch']);
             }
             else {
                 return callback(data);
@@ -145,10 +148,4 @@ class Database {
 
 
 module.exports = new Database();
-
-// var obj = new Database();
-// obj.fetch('InstructorMaster',(cbData)=>{
-//     console.log(cbData);
-// })
-
 

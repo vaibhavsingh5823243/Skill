@@ -32,10 +32,14 @@ create table InstructorMaster(id int primary key auto_increment,uniqueCode varch
 
 ### To create user_assesment_mapping
 ```
-create table UserAssesmentMapping(userAssesmentId int auto_increment primary key,userAssesmentCode varchar(100),userCode varchar(100),assesmentCode varchar(100),assesmentGainedMarks int,assesmentTotalMarks int,assesmentPerformancePercentage int,createdOn varchar(100),updatedOn varchar(100))
+create table UserAssesmentMapping(userAssesmentId int auto_increment primary key,userAssesmentCode varchar(100),userCode varchar(100),assesmentCode varchar(100),assesmentGainedMarks int,assesmentTotalMarks int,assesmentPerformancePercentage int,createdOn varchar(100),updatedOn varchar(100),timeTaken int)
 ```
 
+### To create quizjson
+```
+create table QuizJson(testCode varchar(100),testTitle varchar(100),startDate date,endDate date,maxMarks int,duration int,testType varchar(100),questions json)
+```
 ###
 ```
-UPDATE tableName SET column name=CONCAT('CRSE-', UNIX_TIMESTAMP(created_on)) WHERE xyz'
+UPDATE tableName SET column name=CONCAT('CRSE-', UNIX_TIMESTAMP(created_on)) WHERE xyz
 ```
