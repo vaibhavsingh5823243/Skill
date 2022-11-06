@@ -50,6 +50,7 @@ class Authentication {
 
     login(req, res) {
         let userInfo = req.body;
+        console.log(userInfo)
         database.validate(userInfo, tableName, (cbData) => {
             if (cbData === true) {
                 delete userInfo['password'];
