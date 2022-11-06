@@ -69,6 +69,7 @@ class Database {
         var query = `SELECT ${columns} FROM ${tableName} WHERE ${Object.keys(jsonData)}='${Object.values(jsonData)}';`;
         pool.query(query, (err, data) => {
             if (err) {
+                console.log(errs)
                 return callback(statusCode['error']);
             }
             else if(data.length===0){
